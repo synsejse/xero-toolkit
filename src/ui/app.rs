@@ -231,4 +231,3 @@ fn load_page_from_resource(
 
     Ok(())
 }
-

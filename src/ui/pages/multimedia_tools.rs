@@ -188,7 +188,9 @@ fn setup_jellyfin(page_builder: &Builder, terminal: &Terminal, terminal_title: &
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -196,17 +198,28 @@ fn setup_jellyfin(page_builder: &Builder, terminal: &Terminal, terminal_title: &
                 Some(h) => h,
                 None => {
                     warn!("No AUR helper detected");
-                    terminal_clone.feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
+                    terminal_clone
+                        .feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
                     return;
                 }
             };
 
             let commands = vec![
-                terminal::TerminalCommand::new(helper,
-                    &["-S", "--noconfirm", "--needed",
-                      "jellyfin-server", "jellyfin-web", "jellyfin-ffmpeg"]),
-                terminal::TerminalCommand::new("sudo",
-                    &["systemctl", "enable", "--now", "jellyfin.service"]),
+                terminal::TerminalCommand::new(
+                    helper,
+                    &[
+                        "-S",
+                        "--noconfirm",
+                        "--needed",
+                        "jellyfin-server",
+                        "jellyfin-web",
+                        "jellyfin-ffmpeg",
+                    ],
+                ),
+                terminal::TerminalCommand::new(
+                    "sudo",
+                    &["systemctl", "enable", "--now", "jellyfin.service"],
+                ),
             ];
 
             terminal::run_terminal_commands(

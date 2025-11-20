@@ -178,10 +178,7 @@ fn parse_os_release_name(content: &str) -> Option<String> {
     // Final fallback to ID
     for line in content.lines() {
         if line.starts_with("ID=") {
-            let name = line
-                .trim_start_matches("ID=")
-                .trim_matches('"')
-                .to_string();
+            let name = line.trim_start_matches("ID=").trim_matches('"').to_string();
             if !name.is_empty() {
                 return Some(name);
             }
@@ -330,4 +327,3 @@ pub fn check_system_requirements(main_window: &ApplicationWindow) -> bool {
     info!("All checks passed successfully");
     true
 }
-

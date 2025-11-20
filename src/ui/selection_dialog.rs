@@ -6,8 +6,8 @@
 use gtk4::prelude::*;
 use gtk4::{Box as GtkBox, Builder, Button, CheckButton, Label, Window};
 use log::info;
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 /// Represents a selectable option in the dialog
 #[derive(Clone, Debug)]
@@ -63,11 +63,8 @@ impl SelectionDialogConfig {
 }
 
 /// Show a selection dialog and call the callback with selected option IDs
-pub fn show_selection_dialog<F>(
-    parent: &Window,
-    config: SelectionDialogConfig,
-    on_confirm: F,
-) where
+pub fn show_selection_dialog<F>(parent: &Window, config: SelectionDialogConfig, on_confirm: F)
+where
     F: Fn(Vec<String>) + 'static,
 {
     info!("Opening selection dialog: {}", config.title);
@@ -107,7 +104,9 @@ pub fn show_selection_dialog<F>(
 
     let checkboxes: Rc<RefCell<Vec<(String, CheckButton)>>> = Rc::new(RefCell::new(Vec::new()));
 
-    let available_options: Vec<_> = config.options.into_iter()
+    let available_options: Vec<_> = config
+        .options
+        .into_iter()
         .filter(|opt| !opt.installed)
         .collect();
 
@@ -161,7 +160,10 @@ pub fn show_selection_dialog<F>(
             .map(|(id, _)| id.clone())
             .collect();
 
-        info!("Selection dialog confirmed with {} selections", selected.len());
+        info!(
+            "Selection dialog confirmed with {} selections",
+            selected.len()
+        );
 
         if !selected.is_empty() {
             on_confirm(selected);
@@ -173,4 +175,3 @@ pub fn show_selection_dialog<F>(
     // Show the dialog
     dialog.present();
 }
-

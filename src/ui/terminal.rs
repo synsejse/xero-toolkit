@@ -82,19 +82,23 @@ pub fn run_terminal_commands(
 
     ACTION_RUNNING.store(true, Ordering::SeqCst);
 
-    info!("Starting action: {} - {} commands to execute", action_name, commands.len());
+    info!(
+        "Starting action: {} - {} commands to execute",
+        action_name,
+        commands.len()
+    );
     terminal_title.set_label(&format!("Terminal Output - {}", action_name));
     button.set_sensitive(false);
 
     terminal.reset(true, true);
 
-    terminal.feed(format!("=== {} ===\r\n\r\n", action_name).as_bytes());
-    terminal.feed(b"The following commands will be executed:\r\n\r\n");
+    terminal.feed(format!("=== {} ===\r\n", action_name).as_bytes());
+    terminal.feed(b"The following commands will be executed:\r\n");
 
     for (i, cmd) in commands.iter().enumerate() {
-        terminal.feed(format!("  {}. {} {}\r\n", i + 1, cmd.command, cmd.args.join(" ")).as_bytes());
+        terminal
+            .feed(format!("  {}. {} {}\r\n", i + 1, cmd.command, cmd.args.join(" ")).as_bytes());
     }
-    terminal.feed(b"\r\n");
     terminal.feed(b"Do you want to proceed? [Y/n]: ");
 
     wait_for_confirmation(button, terminal, terminal_title, commands, action_name);
@@ -112,47 +116,75 @@ fn wait_for_confirmation(
     let title_clone = terminal_title.clone();
     let action_name_clone = action_name.to_string();
 
-    let handler_id_cell: Rc<RefCell<Option<glib::SignalHandlerId>>> = Rc::new(RefCell::new(None));
-    let handler_id_cell_clone = handler_id_cell.clone();
     let input_buffer: Rc<RefCell<String>> = Rc::new(RefCell::new(String::new()));
     let input_buffer_clone = input_buffer.clone();
 
-    let handler_id = terminal.connect_commit(move |term, text, _len| {
-        for ch in text.chars() {
-            if ch == '\r' || ch == '\n' {
+    let terminal_clone = terminal.clone();
+
+    // Use key controller to intercept keys before they reach the terminal
+    let key_controller = gtk4::EventControllerKey::new();
+
+    key_controller.connect_key_pressed(move |_controller, key, _code, _modifier| {
+        let keyval = key.name();
+        let keyval_str = keyval.as_ref().map(|s| s.as_str()).unwrap_or("");
+
+        match keyval_str {
+            "Return" | "KP_Enter" => {
                 let input = input_buffer_clone.borrow().trim().to_lowercase();
 
                 if input == "y" || input == "yes" || input.is_empty() {
-                    term.feed(b"\r\n\r\n");
-                    term.feed(format!("=== Starting {} ===\r\n\r\n", action_name_clone).as_bytes());
+                    terminal_clone.feed(b"\r\n");
+                    terminal_clone
+                        .feed(format!("=== Starting {} ===\r\n", action_name_clone).as_bytes());
 
-                    execute_command_sequence(&button_clone, term, &title_clone, commands.clone(), &action_name_clone, 0);
+                    execute_command_sequence(
+                        &button_clone,
+                        &terminal_clone,
+                        &title_clone,
+                        commands.clone(),
+                        &action_name_clone,
+                        0,
+                    );
                 } else {
-                    term.feed(b"\r\n\r\n");
-                    term.feed(b"========================================\r\n");
-                    term.feed(b"X Operation cancelled by user\r\n");
-                    term.feed(b"========================================\r\n");
-                    term.feed(b"\r\n");
+                    terminal_clone.feed(b"\r\n========================================\r\n");
+                    terminal_clone.feed(b"X Operation cancelled by user\r\n");
+                    terminal_clone.feed(b"========================================\r\n");
                     title_clone.set_label("Terminal Output");
                     button_clone.set_sensitive(true);
                     ACTION_RUNNING.store(false, Ordering::SeqCst);
                 }
 
-                if let Some(id) = handler_id_cell_clone.borrow_mut().take() {
-                    term.disconnect(id);
+                // Remove the controller after processing
+                terminal_clone
+                    .remove_controller(&_controller.clone().upcast::<gtk4::EventController>());
+
+                glib::Propagation::Stop
+            }
+            "BackSpace" => {
+                let mut buffer = input_buffer_clone.borrow_mut();
+                if !buffer.is_empty() {
+                    buffer.pop();
+                    // Proper backspace: move cursor back, overwrite with space, move cursor back again
+                    terminal_clone.feed(b"\x08\x20\x08");
                 }
-                break;
-            } else {
-                input_buffer_clone.borrow_mut().push(ch);
-                term.feed(format!("{}", ch).as_bytes());
+                glib::Propagation::Stop
+            }
+            _ => {
+                // Capture and echo normal characters
+                if let Some(ch) = key.to_unicode() {
+                    if ch.is_ascii() && !ch.is_control() {
+                        input_buffer_clone.borrow_mut().push(ch);
+                        // Echo the character to the terminal
+                        terminal_clone.feed(ch.to_string().as_bytes());
+                    }
+                }
+                glib::Propagation::Stop
             }
         }
     });
 
-    *handler_id_cell.borrow_mut() = Some(handler_id);
+    terminal.add_controller(key_controller);
 }
-
-
 
 /// Internal function to execute commands in sequence
 fn execute_command_sequence(
@@ -165,11 +197,9 @@ fn execute_command_sequence(
 ) {
     if current_index >= commands.len() {
         info!("{} - All commands completed successfully", action_name);
-        terminal.feed(b"\r\n");
-        terminal.feed(b"========================================\r\n");
+        terminal.feed(b"\r\n========================================\r\n");
         terminal.feed(format!("✓ {} completed successfully\r\n", action_name).as_bytes());
         terminal.feed(b"========================================\r\n");
-        terminal.feed(b"\r\n");
         terminal_title.set_label("Terminal Output");
         button.set_sensitive(true);
         ACTION_RUNNING.store(false, Ordering::SeqCst);
@@ -177,10 +207,24 @@ fn execute_command_sequence(
     }
 
     let cmd = &commands[current_index];
-    info!("Executing command {}/{}: {} {:?}", current_index + 1, commands.len(), cmd.command, cmd.args);
+    info!(
+        "Executing command {}/{}: {} {:?}",
+        current_index + 1,
+        commands.len(),
+        cmd.command,
+        cmd.args
+    );
 
-    terminal.feed(format!("\r\n>>> Executing step {}/{}: {} {}\r\n\r\n",
-        current_index + 1, commands.len(), cmd.command, cmd.args.join(" ")).as_bytes());
+    terminal.feed(
+        format!(
+            "\r\n>>> Executing step {}/{}: {} {}\r\n",
+            current_index + 1,
+            commands.len(),
+            cmd.command,
+            cmd.args.join(" ")
+        )
+        .as_bytes(),
+    );
 
     let pty = match vte4::Pty::new_sync(vte4::PtyFlags::DEFAULT, gio::Cancellable::NONE) {
         Ok(pty) => pty,
@@ -223,13 +267,16 @@ fn execute_command_sequence(
                 current_index + 1,
             );
         } else {
-            let msg = format!("{} {} exited with code {}", cmd_clone.command, cmd_clone.args.join(" "), status);
+            let msg = format!(
+                "{} {} exited with code {}",
+                cmd_clone.command,
+                cmd_clone.args.join(" "),
+                status
+            );
             error!("{}", msg);
-            terminal_clone.feed(b"\r\n");
-            terminal_clone.feed(b"========================================\r\n");
+            terminal_clone.feed(b"\r\n========================================\r\n");
             terminal_clone.feed(format!("✗ {}\r\n", msg).as_bytes());
             terminal_clone.feed(b"========================================\r\n");
-            terminal_clone.feed(b"\r\n");
             terminal_clone.feed(b"The process encountered an error.\r\n");
             terminal_clone.feed(b"Sequence aborted.\r\n");
             title_clone.set_label("Terminal Output");
@@ -260,22 +307,19 @@ fn execute_command_sequence(
         || {},
         -1,
         gio::Cancellable::NONE,
-        move |result| {
-            match result {
-                Ok(pid) => {
-                    info!("Command spawned successfully with PID: {:?}", pid);
-                    terminal_watch.watch_child(pid);
-                }
-                Err(e) => {
-                    error!("Failed to spawn command: {}", e);
-                    terminal_clone2.feed(format!("\r\nERROR: Failed to spawn {}: {}\r\n", cmd_str, e).as_bytes());
-                    button_clone2.set_sensitive(true);
-                    title_clone2.set_label("Terminal Output");
-                    ACTION_RUNNING.store(false, Ordering::SeqCst);
-                }
+        move |result| match result {
+            Ok(pid) => {
+                info!("Command spawned successfully with PID: {:?}", pid);
+                terminal_watch.watch_child(pid);
+            }
+            Err(e) => {
+                error!("Failed to spawn command: {}", e);
+                terminal_clone2
+                    .feed(format!("\r\nERROR: Failed to spawn {}: {}\r\n", cmd_str, e).as_bytes());
+                button_clone2.set_sensitive(true);
+                title_clone2.set_label("Terminal Output");
+                ACTION_RUNNING.store(false, Ordering::SeqCst);
             }
         },
     );
 }
-
-

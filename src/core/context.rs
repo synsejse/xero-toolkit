@@ -16,4 +16,3 @@ pub struct UiComponents {
     #[allow(dead_code)]
     pub main_paned: Paned,
 }
-

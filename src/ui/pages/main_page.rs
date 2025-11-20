@@ -45,7 +45,9 @@ fn setup_update_system_button(page_builder: &Builder, main_builder: &Builder) {
 
             if terminal::is_action_running() {
                 warn!("Action already running, ignoring button click");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -53,14 +55,13 @@ fn setup_update_system_button(page_builder: &Builder, main_builder: &Builder) {
                 Some(h) => h,
                 None => {
                     warn!("No AUR helper detected");
-                    terminal_clone.feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
+                    terminal_clone
+                        .feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
                     return;
                 }
             };
 
-            let commands = vec![
-                terminal::TerminalCommand::new(helper, &["-Syu"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new(helper, &["-Syu"])];
 
             terminal::run_terminal_commands(
                 &button_clone,
@@ -91,7 +92,9 @@ fn setup_pkg_manager_button(page_builder: &Builder, main_builder: &Builder) {
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -119,14 +122,14 @@ fn setup_parallel_downloads_button(page_builder: &Builder, main_builder: &Builde
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
             // Run pmpd to configure parallel downloads
-            let commands = vec![
-                terminal::TerminalCommand::new("sudo", &["pmpd"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new("sudo", &["pmpd"])];
 
             terminal::run_terminal_commands(
                 &button_clone,
@@ -157,7 +160,9 @@ fn setup_install_drivers_button(page_builder: &Builder, main_builder: &Builder) 
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -208,7 +213,8 @@ fn setup_external_links(page_builder: &Builder) {
 /// Show package manager selection dialog
 fn show_pkg_manager_dialog(button: &Button, terminal: &Terminal, terminal_title: &Label) {
     let widget = button.clone().upcast::<gtk4::Widget>();
-    let window = widget.root()
+    let window = widget
+        .root()
         .and_then(|root| root.downcast::<ApplicationWindow>().ok());
 
     if let Some(window) = window {
@@ -267,73 +273,83 @@ fn show_pkg_manager_dialog(button: &Button, terminal: &Terminal, terminal_title:
         ))
         .confirm_label("Install");
 
-        selection_dialog::show_selection_dialog(
-            window_ref,
-            config,
-            move |selected_ids| {
-                if selected_ids.is_empty() {
+        selection_dialog::show_selection_dialog(window_ref, config, move |selected_ids| {
+            if selected_ids.is_empty() {
+                return;
+            }
+
+            let helper = match utils::detect_aur_helper() {
+                Some(h) => h,
+                None => {
+                    warn!("No AUR helper detected");
+                    terminal_for_dialog
+                        .feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
                     return;
                 }
+            };
 
-                let helper = match utils::detect_aur_helper() {
-                    Some(h) => h,
-                    None => {
-                        warn!("No AUR helper detected");
-                        terminal_for_dialog.feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
-                        return;
-                    }
-                };
+            let mut commands = vec![];
 
-                let mut commands = vec![];
+            if selected_ids.contains(&"octopi".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    helper,
+                    &["-S", "--noconfirm", "--needed", "octopi"],
+                ));
+            }
 
-                if selected_ids.contains(&"octopi".to_string()) {
-                    commands.push(terminal::TerminalCommand::new(helper,
-                        &["-S", "--noconfirm", "--needed", "octopi"]));
-                }
+            if selected_ids.contains(&"pacseek".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    helper,
+                    &["-S", "--noconfirm", "--needed", "pacseek", "pacfinder"],
+                ));
+            }
 
-                if selected_ids.contains(&"pacseek".to_string()) {
-                    commands.push(terminal::TerminalCommand::new(helper,
-                        &["-S", "--noconfirm", "--needed", "pacseek", "pacfinder"]));
-                }
+            if selected_ids.contains(&"bauh".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    helper,
+                    &["-S", "--noconfirm", "--needed", "bauh"],
+                ));
+            }
 
-                if selected_ids.contains(&"bauh".to_string()) {
-                    commands.push(terminal::TerminalCommand::new(helper,
-                        &["-S", "--noconfirm", "--needed", "bauh"]));
-                }
+            if selected_ids.contains(&"warehouse".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    "flatpak",
+                    &["install", "-y", "io.github.flattool.Warehouse"],
+                ));
+            }
 
-                if selected_ids.contains(&"warehouse".to_string()) {
-                    commands.push(terminal::TerminalCommand::new("flatpak",
-                        &["install", "-y", "io.github.flattool.Warehouse"]));
-                }
+            if selected_ids.contains(&"flatseal".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    "flatpak",
+                    &["install", "-y", "com.github.tchx84.Flatseal"],
+                ));
+            }
 
-                if selected_ids.contains(&"flatseal".to_string()) {
-                    commands.push(terminal::TerminalCommand::new("flatpak",
-                        &["install", "-y", "com.github.tchx84.Flatseal"]));
-                }
+            if selected_ids.contains(&"bazaar".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    "flatpak",
+                    &["install", "-y", "io.github.kolunmi.Bazaar"],
+                ));
+            }
 
-                if selected_ids.contains(&"bazaar".to_string()) {
-                    commands.push(terminal::TerminalCommand::new("flatpak",
-                        &["install", "-y", "io.github.kolunmi.Bazaar"]));
-                }
-
-                if !commands.is_empty() {
-                    terminal::run_terminal_commands(
-                        &button_for_dialog,
-                        &terminal_for_dialog,
-                        &title_for_dialog,
-                        commands,
-                        "Package Manager GUI Installation",
-                    );
-                }
-            },
-        );
+            if !commands.is_empty() {
+                terminal::run_terminal_commands(
+                    &button_for_dialog,
+                    &terminal_for_dialog,
+                    &title_for_dialog,
+                    commands,
+                    "Package Manager GUI Installation",
+                );
+            }
+        });
     }
 }
 
 /// Show driver installation dialog
 fn show_driver_installation_dialog(button: &Button, terminal: &Terminal, terminal_title: &Label) {
     let widget = button.clone().upcast::<gtk4::Widget>();
-    let window = widget.root()
+    let window = widget
+        .root()
         .and_then(|root| root.downcast::<ApplicationWindow>().ok());
 
     if let Some(window) = window {
@@ -366,61 +382,74 @@ fn show_driver_installation_dialog(button: &Button, terminal: &Terminal, termina
         ))
         .confirm_label("Install");
 
-        selection_dialog::show_selection_dialog(
-            window_ref,
-            config,
-            move |selected_ids| {
-                if selected_ids.is_empty() {
+        selection_dialog::show_selection_dialog(window_ref, config, move |selected_ids| {
+            if selected_ids.is_empty() {
+                return;
+            }
+
+            // Handle GPU drivers (interactive)
+            if selected_ids.contains(&"gpu".to_string()) {
+                show_gpu_driver_selection(
+                    &button_for_dialog,
+                    &terminal_for_dialog,
+                    &title_for_dialog,
+                );
+                return;
+            }
+
+            let helper = match utils::detect_aur_helper() {
+                Some(h) => h,
+                None => {
+                    warn!("No AUR helper detected");
+                    terminal_for_dialog
+                        .feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
                     return;
                 }
+            };
 
-                // Handle GPU drivers (interactive)
-                if selected_ids.contains(&"gpu".to_string()) {
-                    show_gpu_driver_selection(&button_for_dialog, &terminal_for_dialog, &title_for_dialog);
-                    return;
-                }
+            let mut commands = vec![];
 
-                let helper = match utils::detect_aur_helper() {
-                    Some(h) => h,
-                    None => {
-                        warn!("No AUR helper detected");
-                        terminal_for_dialog.feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
-                        return;
-                    }
-                };
-
-                let mut commands = vec![];
-
-                if selected_ids.contains(&"tailscale".to_string()) {
-                    commands.push(terminal::TerminalCommand::new("bash",
+            if selected_ids.contains(&"tailscale".to_string()) {
+                commands.push(terminal::TerminalCommand::new("bash",
                         &["-c", "curl -fsSL https://raw.githubusercontent.com/xerolinux/xero-fixes/main/conf/install.sh | bash"]));
-                }
+            }
 
-                if selected_ids.contains(&"asus_rog".to_string()) {
-                    commands.push(terminal::TerminalCommand::new(helper,
-                        &["-S", "--noconfirm", "--needed", "rog-control-center", "asusctl", "supergfxctl"]));
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["systemctl", "enable", "--now", "asusd", "supergfxd"]));
-                }
+            if selected_ids.contains(&"asus_rog".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    helper,
+                    &[
+                        "-S",
+                        "--noconfirm",
+                        "--needed",
+                        "rog-control-center",
+                        "asusctl",
+                        "supergfxctl",
+                    ],
+                ));
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &["systemctl", "enable", "--now", "asusd", "supergfxd"],
+                ));
+            }
 
-                if !commands.is_empty() {
-                    terminal::run_terminal_commands(
-                        &button_for_dialog,
-                        &terminal_for_dialog,
-                        &title_for_dialog,
-                        commands,
-                        "Driver/Tools Installation",
-                    );
-                }
-            },
-        );
+            if !commands.is_empty() {
+                terminal::run_terminal_commands(
+                    &button_for_dialog,
+                    &terminal_for_dialog,
+                    &title_for_dialog,
+                    commands,
+                    "Driver/Tools Installation",
+                );
+            }
+        });
     }
 }
 
 /// Show GPU driver vendor selection dialog
 fn show_gpu_driver_selection(button: &Button, terminal: &Terminal, terminal_title: &Label) {
     let widget = button.clone().upcast::<gtk4::Widget>();
-    let window = widget.root()
+    let window = widget
+        .root()
         .and_then(|root| root.downcast::<ApplicationWindow>().ok());
 
     if let Some(window) = window {
@@ -459,85 +488,159 @@ fn show_gpu_driver_selection(button: &Button, terminal: &Terminal, terminal_titl
         ))
         .confirm_label("Install");
 
-        selection_dialog::show_selection_dialog(
-            window_ref,
-            config,
-            move |selected_ids| {
-                if selected_ids.is_empty() {
-                    return;
-                }
+        selection_dialog::show_selection_dialog(window_ref, config, move |selected_ids| {
+            if selected_ids.is_empty() {
+                return;
+            }
 
-                let mut commands = vec![];
+            let mut commands = vec![];
 
-                if selected_ids.contains(&"amd".to_string()) {
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["pacman", "-S", "--needed", "--noconfirm",
-                          "linux-headers", "vulkan-radeon", "lib32-vulkan-radeon",
-                          "vulkan-icd-loader", "lib32-vulkan-icd-loader",
-                          "linux-firmware-radeon",
-                          "vulkan-mesa-layers", "lib32-vulkan-mesa-layers"]));
-                }
+            if selected_ids.contains(&"amd".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &[
+                        "pacman",
+                        "-S",
+                        "--needed",
+                        "--noconfirm",
+                        "linux-headers",
+                        "vulkan-radeon",
+                        "lib32-vulkan-radeon",
+                        "vulkan-icd-loader",
+                        "lib32-vulkan-icd-loader",
+                        "linux-firmware-radeon",
+                        "vulkan-mesa-layers",
+                        "lib32-vulkan-mesa-layers",
+                    ],
+                ));
+            }
 
-                if selected_ids.contains(&"intel".to_string()) {
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["pacman", "-S", "--needed", "--noconfirm",
-                          "linux-headers", "vulkan-intel", "lib32-vulkan-intel",
-                          "vulkan-icd-loader", "lib32-vulkan-icd-loader",
-                          "intel-media-driver", "intel-gmmlib", "onevpl-intel-gpu",
-                          "gstreamer-vaapi"]));
-                }
+            if selected_ids.contains(&"intel".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &[
+                        "pacman",
+                        "-S",
+                        "--needed",
+                        "--noconfirm",
+                        "linux-headers",
+                        "vulkan-intel",
+                        "lib32-vulkan-intel",
+                        "vulkan-icd-loader",
+                        "lib32-vulkan-icd-loader",
+                        "intel-media-driver",
+                        "intel-gmmlib",
+                        "onevpl-intel-gpu",
+                        "gstreamer-vaapi",
+                    ],
+                ));
+            }
 
-                if selected_ids.contains(&"nvidia_closed".to_string()) {
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["pacman", "-S", "--needed", "--noconfirm",
-                          "linux-headers", "nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils",
-                          "nvidia-settings", "vulkan-icd-loader", "lib32-vulkan-icd-loader",
-                          "egl-wayland", "opencl-nvidia", "lib32-opencl-nvidia",
-                          "libvdpau-va-gl", "libvdpau", "linux-firmware-nvidia"]));
+            if selected_ids.contains(&"nvidia_closed".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &[
+                        "pacman",
+                        "-S",
+                        "--needed",
+                        "--noconfirm",
+                        "linux-headers",
+                        "nvidia-dkms",
+                        "nvidia-utils",
+                        "lib32-nvidia-utils",
+                        "nvidia-settings",
+                        "vulkan-icd-loader",
+                        "lib32-vulkan-icd-loader",
+                        "egl-wayland",
+                        "opencl-nvidia",
+                        "lib32-opencl-nvidia",
+                        "libvdpau-va-gl",
+                        "libvdpau",
+                        "linux-firmware-nvidia",
+                    ],
+                ));
 
-                    commands.push(terminal::TerminalCommand::new("sudo",
+                commands.push(terminal::TerminalCommand::new("sudo",
                         &["sh", "-c", "sed -i 's/\\(GRUB_CMDLINE_LINUX_DEFAULT=[\"'\\''']\\)/\\1nvidia-drm.modeset=1 /' /etc/default/grub"]));
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["grub-mkconfig", "-o", "/boot/grub/grub.cfg"]));
-                    commands.push(terminal::TerminalCommand::new("sudo",
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &["grub-mkconfig", "-o", "/boot/grub/grub.cfg"],
+                ));
+                commands.push(terminal::TerminalCommand::new("sudo",
                         &["sh", "-c", "sed -i 's/^MODULES=()/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf"]));
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["systemctl", "enable", "nvidia-suspend.service", "nvidia-hibernate.service", "nvidia-resume.service"]));
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["mkinitcpio", "-P"]));
-                }
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &[
+                        "systemctl",
+                        "enable",
+                        "nvidia-suspend.service",
+                        "nvidia-hibernate.service",
+                        "nvidia-resume.service",
+                    ],
+                ));
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &["mkinitcpio", "-P"],
+                ));
+            }
 
-                if selected_ids.contains(&"nvidia_open".to_string()) {
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["pacman", "-S", "--needed", "--noconfirm",
-                          "linux-headers", "nvidia-open-dkms", "nvidia-utils", "lib32-nvidia-utils",
-                          "nvidia-settings", "vulkan-icd-loader", "lib32-vulkan-icd-loader",
-                          "egl-wayland", "opencl-nvidia", "lib32-opencl-nvidia",
-                          "libvdpau-va-gl", "libvdpau", "linux-firmware-nvidia"]));
+            if selected_ids.contains(&"nvidia_open".to_string()) {
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &[
+                        "pacman",
+                        "-S",
+                        "--needed",
+                        "--noconfirm",
+                        "linux-headers",
+                        "nvidia-open-dkms",
+                        "nvidia-utils",
+                        "lib32-nvidia-utils",
+                        "nvidia-settings",
+                        "vulkan-icd-loader",
+                        "lib32-vulkan-icd-loader",
+                        "egl-wayland",
+                        "opencl-nvidia",
+                        "lib32-opencl-nvidia",
+                        "libvdpau-va-gl",
+                        "libvdpau",
+                        "linux-firmware-nvidia",
+                    ],
+                ));
 
-                    commands.push(terminal::TerminalCommand::new("sudo",
+                commands.push(terminal::TerminalCommand::new("sudo",
                         &["sh", "-c", "sed -i 's/\\(GRUB_CMDLINE_LINUX_DEFAULT=[\"'\\''']\\)/\\1nvidia-drm.modeset=1 /' /etc/default/grub"]));
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["grub-mkconfig", "-o", "/boot/grub/grub.cfg"]));
-                    commands.push(terminal::TerminalCommand::new("sudo",
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &["grub-mkconfig", "-o", "/boot/grub/grub.cfg"],
+                ));
+                commands.push(terminal::TerminalCommand::new("sudo",
                         &["sh", "-c", "sed -i 's/^MODULES=()/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf"]));
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["systemctl", "enable", "nvidia-suspend.service", "nvidia-hibernate.service", "nvidia-resume.service"]));
-                    commands.push(terminal::TerminalCommand::new("sudo",
-                        &["mkinitcpio", "-P"]));
-                }
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &[
+                        "systemctl",
+                        "enable",
+                        "nvidia-suspend.service",
+                        "nvidia-hibernate.service",
+                        "nvidia-resume.service",
+                    ],
+                ));
+                commands.push(terminal::TerminalCommand::new(
+                    "sudo",
+                    &["mkinitcpio", "-P"],
+                ));
+            }
 
-                if !commands.is_empty() {
-                    terminal::run_terminal_commands(
-                        &button_for_dialog,
-                        &terminal_for_dialog,
-                        &title_for_dialog,
-                        commands,
-                        "GPU Driver Installation",
-                    );
-                }
-            },
-        );
+            if !commands.is_empty() {
+                terminal::run_terminal_commands(
+                    &button_for_dialog,
+                    &terminal_for_dialog,
+                    &title_for_dialog,
+                    commands,
+                    "GPU Driver Installation",
+                );
+            }
+        });
     }
 }
-

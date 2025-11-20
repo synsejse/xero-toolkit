@@ -49,13 +49,13 @@ fn setup_clr_pacman(page_builder: &Builder, terminal: &Terminal, terminal_title:
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
-            let commands = vec![
-                terminal::TerminalCommand::new("sudo", &["pacman", "-Scc"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new("sudo", &["pacman", "-Scc"])];
 
             terminal::run_terminal_commands(
                 button,
@@ -78,13 +78,16 @@ fn setup_unlock_pacman(page_builder: &Builder, terminal: &Terminal, terminal_tit
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
-            let commands = vec![
-                terminal::TerminalCommand::new("sudo", &["rm", "-f", "/var/lib/pacman/db.lck"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new(
+                "sudo",
+                &["rm", "-f", "/var/lib/pacman/db.lck"],
+            )];
 
             terminal::run_terminal_commands(
                 button,
@@ -107,7 +110,9 @@ fn setup_plasma_x11(page_builder: &Builder, terminal: &Terminal, terminal_title:
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -115,14 +120,16 @@ fn setup_plasma_x11(page_builder: &Builder, terminal: &Terminal, terminal_title:
                 Some(h) => h,
                 None => {
                     warn!("No AUR helper detected");
-                    terminal_clone.feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
+                    terminal_clone
+                        .feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
                     return;
                 }
             };
 
-            let commands = vec![
-                terminal::TerminalCommand::new(helper, &["-S", "--noconfirm", "kwin-x11", "plasma-x11-session"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new(
+                helper,
+                &["-S", "--noconfirm", "kwin-x11", "plasma-x11-session"],
+            )];
 
             terminal::run_terminal_commands(
                 button,
@@ -145,7 +152,9 @@ fn setup_vm_guest_utils(page_builder: &Builder, terminal: &Terminal, terminal_ti
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -153,7 +162,8 @@ fn setup_vm_guest_utils(page_builder: &Builder, terminal: &Terminal, terminal_ti
                 Some(h) => h,
                 None => {
                     warn!("No AUR helper detected");
-                    terminal_clone.feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
+                    terminal_clone
+                        .feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
                     return;
                 }
             };
@@ -167,13 +177,23 @@ fn setup_vm_guest_utils(page_builder: &Builder, terminal: &Terminal, terminal_ti
                     let commands = match virt.as_str() {
                         "oracle" => {
                             terminal_clone.feed(b"Detected VirtualBox environment\r\n");
-                            vec![terminal::TerminalCommand::new(helper,
-                                &["-S", "--needed", "--noconfirm", "virtualbox-guest-utils"])]
+                            vec![terminal::TerminalCommand::new(
+                                helper,
+                                &["-S", "--needed", "--noconfirm", "virtualbox-guest-utils"],
+                            )]
                         }
                         "kvm" => {
                             terminal_clone.feed(b"Detected KVM environment\r\n");
-                            vec![terminal::TerminalCommand::new(helper,
-                                &["-S", "--needed", "--noconfirm", "qemu-guest-agent", "spice-vdagent"])]
+                            vec![terminal::TerminalCommand::new(
+                                helper,
+                                &[
+                                    "-S",
+                                    "--needed",
+                                    "--noconfirm",
+                                    "qemu-guest-agent",
+                                    "spice-vdagent",
+                                ],
+                            )]
                         }
                         _ => vec![],
                     };
@@ -215,7 +235,9 @@ fn setup_fix_gpgme(page_builder: &Builder, terminal: &Terminal, terminal_title: 
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -236,7 +258,8 @@ fn setup_fix_gpgme(page_builder: &Builder, terminal: &Terminal, terminal_title: 
 }
 
 fn setup_fix_arch_keyring(page_builder: &Builder, terminal: &Terminal, terminal_title: &Label) {
-    if let Some(btn_fix_arch_keyring) = page_builder.object::<gtk4::Button>("btn_fix_arch_keyring") {
+    if let Some(btn_fix_arch_keyring) = page_builder.object::<gtk4::Button>("btn_fix_arch_keyring")
+    {
         let terminal_clone = terminal.clone();
         let title_clone = terminal_title.clone();
 
@@ -271,7 +294,9 @@ fn setup_fix_arch_keyring(page_builder: &Builder, terminal: &Terminal, terminal_
 }
 
 fn setup_update_mirrorlist(page_builder: &Builder, terminal: &Terminal, terminal_title: &Label) {
-    if let Some(btn_update_mirrorlist) = page_builder.object::<gtk4::Button>("btn_update_mirrorlist") {
+    if let Some(btn_update_mirrorlist) =
+        page_builder.object::<gtk4::Button>("btn_update_mirrorlist")
+    {
         let terminal_clone = terminal.clone();
         let title_clone = terminal_title.clone();
 

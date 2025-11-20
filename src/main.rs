@@ -1,5 +1,5 @@
-use gtk4::Application;
 use gtk4::prelude::{ApplicationExt, ApplicationExtManual};
+use gtk4::Application;
 use log::info;
 
 mod config;

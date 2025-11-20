@@ -45,7 +45,9 @@ fn setup_steam_aio(page_builder: &Builder, terminal: &Terminal, terminal_title: 
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -53,30 +55,84 @@ fn setup_steam_aio(page_builder: &Builder, terminal: &Terminal, terminal_title: 
                 Some(h) => h,
                 None => {
                     warn!("No AUR helper detected");
-                    terminal_clone.feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
+                    terminal_clone
+                        .feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
                     return;
                 }
             };
 
-            let commands = vec![
-                terminal::TerminalCommand::new(helper, &["-S", "--noconfirm", "--needed",
-                  "steam", "lib32-pipewire-jack", "gamemode", "gamescope",
-                  "mangohud", "mangoverlay", "lib32-mangohud", "wine-meta",
-                  "wine-nine", "ttf-liberation", "lib32-fontconfig", "wqy-zenhei",
-                  "vkd3d", "giflib", "lib32-giflib", "libpng", "lib32-libpng",
-                  "libldap", "lib32-libldap", "gnutls", "lib32-gnutls",
-                  "mpg123", "lib32-mpg123", "openal", "lib32-openal",
-                  "v4l-utils", "lib32-v4l-utils", "libpulse", "lib32-libpulse",
-                  "libgpg-error", "lib32-libgpg-error", "alsa-plugins", "lib32-alsa-plugins",
-                  "alsa-lib", "lib32-alsa-lib", "libjpeg-turbo", "lib32-libjpeg-turbo",
-                  "sqlite", "lib32-sqlite", "libxcomposite", "lib32-libxcomposite",
-                  "libxinerama", "lib32-libgcrypt", "libgcrypt", "lib32-libxinerama",
-                  "ncurses", "lib32-ncurses", "ocl-icd", "lib32-ocl-icd",
-                  "libxslt", "lib32-libxslt", "libva", "lib32-libva",
-                  "gtk3", "lib32-gtk3", "gst-plugins-base-libs", "lib32-gst-plugins-base-libs",
-                  "vulkan-icd-loader", "lib32-vulkan-icd-loader", "cups", "dosbox",
-                  "lib32-opencl-icd-loader", "lib32-vkd3d", "opencl-icd-loader"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new(
+                helper,
+                &[
+                    "-S",
+                    "--noconfirm",
+                    "--needed",
+                    "steam",
+                    "lib32-pipewire-jack",
+                    "gamemode",
+                    "gamescope",
+                    "mangohud",
+                    "mangoverlay",
+                    "lib32-mangohud",
+                    "wine-meta",
+                    "wine-nine",
+                    "ttf-liberation",
+                    "lib32-fontconfig",
+                    "wqy-zenhei",
+                    "vkd3d",
+                    "giflib",
+                    "lib32-giflib",
+                    "libpng",
+                    "lib32-libpng",
+                    "libldap",
+                    "lib32-libldap",
+                    "gnutls",
+                    "lib32-gnutls",
+                    "mpg123",
+                    "lib32-mpg123",
+                    "openal",
+                    "lib32-openal",
+                    "v4l-utils",
+                    "lib32-v4l-utils",
+                    "libpulse",
+                    "lib32-libpulse",
+                    "libgpg-error",
+                    "lib32-libgpg-error",
+                    "alsa-plugins",
+                    "lib32-alsa-plugins",
+                    "alsa-lib",
+                    "lib32-alsa-lib",
+                    "libjpeg-turbo",
+                    "lib32-libjpeg-turbo",
+                    "sqlite",
+                    "lib32-sqlite",
+                    "libxcomposite",
+                    "lib32-libxcomposite",
+                    "libxinerama",
+                    "lib32-libgcrypt",
+                    "libgcrypt",
+                    "lib32-libxinerama",
+                    "ncurses",
+                    "lib32-ncurses",
+                    "ocl-icd",
+                    "lib32-ocl-icd",
+                    "libxslt",
+                    "lib32-libxslt",
+                    "libva",
+                    "lib32-libva",
+                    "gtk3",
+                    "lib32-gtk3",
+                    "gst-plugins-base-libs",
+                    "lib32-gst-plugins-base-libs",
+                    "vulkan-icd-loader",
+                    "lib32-vulkan-icd-loader",
+                    "cups",
+                    "dosbox",
+                    "lib32-opencl-icd-loader",
+                    "lib32-vkd3d",
+                    "opencl-icd-loader",
+                ],
+            )];
 
             terminal::run_terminal_commands(
                 button,
@@ -223,7 +279,9 @@ fn setup_lact_oc(page_builder: &Builder, terminal: &Terminal, terminal_title: &L
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -231,7 +289,8 @@ fn setup_lact_oc(page_builder: &Builder, terminal: &Terminal, terminal_title: &L
                 Some(h) => h,
                 None => {
                     warn!("No AUR helper detected");
-                    terminal_clone.feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
+                    terminal_clone
+                        .feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
                     return;
                 }
             };
@@ -262,15 +321,22 @@ fn setup_lutris(page_builder: &Builder, terminal: &Terminal, terminal_title: &La
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
-            let commands = vec![
-                terminal::TerminalCommand::new("flatpak", &["install", "-y", "net.lutris.Lutris",
-                  "org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08",
-                  "org.freedesktop.Platform.VulkanLayer.MangoHud"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new(
+                "flatpak",
+                &[
+                    "install",
+                    "-y",
+                    "net.lutris.Lutris",
+                    "org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08",
+                    "org.freedesktop.Platform.VulkanLayer.MangoHud",
+                ],
+            )];
 
             terminal::run_terminal_commands(
                 button,
@@ -293,15 +359,22 @@ fn setup_heroic(page_builder: &Builder, terminal: &Terminal, terminal_title: &La
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
-            let commands = vec![
-                terminal::TerminalCommand::new("flatpak", &["install", "-y", "com.heroicgameslauncher.hgl",
-                  "org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08",
-                  "org.freedesktop.Platform.VulkanLayer.MangoHud"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new(
+                "flatpak",
+                &[
+                    "install",
+                    "-y",
+                    "com.heroicgameslauncher.hgl",
+                    "org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08",
+                    "org.freedesktop.Platform.VulkanLayer.MangoHud",
+                ],
+            )];
 
             terminal::run_terminal_commands(
                 button,
@@ -324,15 +397,22 @@ fn setup_bottles(page_builder: &Builder, terminal: &Terminal, terminal_title: &L
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
-            let commands = vec![
-                terminal::TerminalCommand::new("flatpak", &["install", "-y", "com.usebottles.bottles",
-                  "org.freedesktop.Platform.VulkanLayer.gamescope",
-                  "org.freedesktop.Platform.VulkanLayer.MangoHud"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new(
+                "flatpak",
+                &[
+                    "install",
+                    "-y",
+                    "com.usebottles.bottles",
+                    "org.freedesktop.Platform.VulkanLayer.gamescope",
+                    "org.freedesktop.Platform.VulkanLayer.MangoHud",
+                ],
+            )];
 
             terminal::run_terminal_commands(
                 button,
@@ -344,4 +424,3 @@ fn setup_bottles(page_builder: &Builder, terminal: &Terminal, terminal_title: &L
         });
     }
 }
-

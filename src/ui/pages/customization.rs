@@ -103,14 +103,16 @@ fn setup_save_desktop(page_builder: &Builder, terminal: &Terminal, terminal_titl
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
-            let commands = vec![
-                terminal::TerminalCommand::new("flatpak",
-                    &["install", "-y", "io.github.vikdevelop.SaveDesktop"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new(
+                "flatpak",
+                &["install", "-y", "io.github.vikdevelop.SaveDesktop"],
+            )];
 
             terminal::run_terminal_commands(
                 button,
@@ -133,19 +135,29 @@ fn setup_grub_theme(page_builder: &Builder, terminal: &Terminal, terminal_title:
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
             let home = std::env::var("HOME").unwrap_or_default();
             let commands = vec![
-                terminal::TerminalCommand::new("git",
-                    &["clone", "--depth", "1", "https://github.com/xerolinux/xero-grubs",
-                      &format!("{}/xero-grubs", home)]),
-                terminal::TerminalCommand::new("sh",
-                    &["-c", &format!("cd {}/xero-grubs && sh install.sh", home)]),
-                terminal::TerminalCommand::new("rm",
-                    &["-rf", &format!("{}/xero-grubs", home)]),
+                terminal::TerminalCommand::new(
+                    "git",
+                    &[
+                        "clone",
+                        "--depth",
+                        "1",
+                        "https://github.com/xerolinux/xero-grubs",
+                        &format!("{}/xero-grubs", home),
+                    ],
+                ),
+                terminal::TerminalCommand::new(
+                    "sh",
+                    &["-c", &format!("cd {}/xero-grubs && sh install.sh", home)],
+                ),
+                terminal::TerminalCommand::new("rm", &["-rf", &format!("{}/xero-grubs", home)]),
             ];
 
             terminal::run_terminal_commands(
@@ -169,7 +181,9 @@ fn setup_wallpapers(page_builder: &Builder, terminal: &Terminal, terminal_title:
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
@@ -177,15 +191,16 @@ fn setup_wallpapers(page_builder: &Builder, terminal: &Terminal, terminal_title:
                 Some(h) => h,
                 None => {
                     warn!("No AUR helper detected");
-                    terminal_clone.feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
+                    terminal_clone
+                        .feed(b"\r\nERROR: No AUR helper detected (paru or yay required).\r\n");
                     return;
                 }
             };
 
-            let commands = vec![
-                terminal::TerminalCommand::new(helper,
-                    &["-S", "--noconfirm", "--needed", "kde-wallpapers-extra"]),
-            ];
+            let commands = vec![terminal::TerminalCommand::new(
+                helper,
+                &["-S", "--noconfirm", "--needed", "kde-wallpapers-extra"],
+            )];
 
             terminal::run_terminal_commands(
                 button,
@@ -208,26 +223,53 @@ fn setup_layan_patch(page_builder: &Builder, terminal: &Terminal, terminal_title
 
             if terminal::is_action_running() {
                 warn!("Action already running");
-                terminal_clone.feed(b"\r\nAnother action is already running. Please wait for it to complete.\r\n");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
                 return;
             }
 
             let home = std::env::var("HOME").unwrap_or_default();
             let commands = vec![
-                terminal::TerminalCommand::new("git",
-                    &["clone", "--depth", "1", "https://github.com/vinceliuice/Layan-gtk-theme.git",
-                      &format!("{}/Layan-gtk-theme", home)]),
-                terminal::TerminalCommand::new("sh",
-                    &["-c", &format!("cd {}/Layan-gtk-theme && sh install.sh -l -c dark -d {}/.themes", home, home)]),
-                terminal::TerminalCommand::new("rm",
-                    &["-rf", &format!("{}/Layan-gtk-theme", home)]),
-                terminal::TerminalCommand::new("git",
-                    &["clone", "--depth", "1", "https://github.com/vinceliuice/Layan-kde.git",
-                      &format!("{}/Layan-kde", home)]),
-                terminal::TerminalCommand::new("sh",
-                    &["-c", &format!("cd {}/Layan-kde && sh install.sh", home)]),
-                terminal::TerminalCommand::new("rm",
-                    &["-rf", &format!("{}/Layan-kde", home)]),
+                terminal::TerminalCommand::new(
+                    "git",
+                    &[
+                        "clone",
+                        "--depth",
+                        "1",
+                        "https://github.com/vinceliuice/Layan-gtk-theme.git",
+                        &format!("{}/Layan-gtk-theme", home),
+                    ],
+                ),
+                terminal::TerminalCommand::new(
+                    "sh",
+                    &[
+                        "-c",
+                        &format!(
+                            "cd {}/Layan-gtk-theme && sh install.sh -l -c dark -d {}/.themes",
+                            home, home
+                        ),
+                    ],
+                ),
+                terminal::TerminalCommand::new(
+                    "rm",
+                    &["-rf", &format!("{}/Layan-gtk-theme", home)],
+                ),
+                terminal::TerminalCommand::new(
+                    "git",
+                    &[
+                        "clone",
+                        "--depth",
+                        "1",
+                        "https://github.com/vinceliuice/Layan-kde.git",
+                        &format!("{}/Layan-kde", home),
+                    ],
+                ),
+                terminal::TerminalCommand::new(
+                    "sh",
+                    &["-c", &format!("cd {}/Layan-kde && sh install.sh", home)],
+                ),
+                terminal::TerminalCommand::new("rm", &["-rf", &format!("{}/Layan-kde", home)]),
             ];
 
             terminal::run_terminal_commands(
