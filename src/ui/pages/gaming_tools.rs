@@ -202,11 +202,6 @@ fn setup_controllers(page_builder: &Builder, terminal: &Terminal, terminal_title
                     config,
                     move |selected_ids| {
                         info!("Selected controllers: {:?}", selected_ids);
-
-                        if selected_ids.is_empty() {
-                            return;
-                        }
-
                         let helper = match utils::detect_aur_helper() {
                             Some(h) => h,
                             None => {

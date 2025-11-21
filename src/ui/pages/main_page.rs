@@ -89,7 +89,6 @@ fn setup_pkg_manager_button(page_builder: &Builder, main_builder: &Builder) {
     }
 }
 
-
 /// Setup external link buttons
 fn setup_external_links(page_builder: &Builder) {
     if let Some(link_discord) = page_builder.object::<Button>("link_discord") {
@@ -193,10 +192,6 @@ fn show_pkg_manager_dialog(button: &Button, terminal: &Terminal, terminal_title:
         .confirm_label("Install");
 
         selection_dialog::show_selection_dialog(window_ref, config, move |selected_ids| {
-            if selected_ids.is_empty() {
-                return;
-            }
-
             let helper = match utils::detect_aur_helper() {
                 Some(h) => h,
                 None => {
@@ -263,4 +258,3 @@ fn show_pkg_manager_dialog(button: &Button, terminal: &Terminal, terminal_title:
         });
     }
 }
-

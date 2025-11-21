@@ -83,7 +83,11 @@ pub fn setup_tabs(tabs_container: &Box, stack: &Stack) {
         ("Gaming Tools", "gaming_tools", "gamepad-symbolic"),
         ("Containers/VMs", "containers_vms", "box-symbolic"),
         ("Multimedia Tools", "multimedia_tools", "play-symbolic"),
-        ("Kernel Manager/SCX", "kernel_manager_scx", "hammer-symbolic"),
+        (
+            "Kernel Manager/SCX",
+            "kernel_manager_scx",
+            "hammer-symbolic",
+        ),
         (
             "Servicing/System tweaks",
             "servicing_system_tweaks",

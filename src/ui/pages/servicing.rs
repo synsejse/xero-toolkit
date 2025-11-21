@@ -379,7 +379,9 @@ fn setup_update_mirrorlist(page_builder: &Builder, terminal: &Terminal, terminal
 }
 
 fn setup_parallel_downloads(page_builder: &Builder, terminal: &Terminal, terminal_title: &Label) {
-    if let Some(btn_parallel_downloads) = page_builder.object::<gtk4::Button>("btn_parallel_downloads") {
+    if let Some(btn_parallel_downloads) =
+        page_builder.object::<gtk4::Button>("btn_parallel_downloads")
+    {
         let terminal_clone = terminal.clone();
         let title_clone = terminal_title.clone();
 

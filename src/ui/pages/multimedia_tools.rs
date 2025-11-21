@@ -121,10 +121,6 @@ fn setup_obs_studio_aio(page_builder: &Builder, terminal: &Terminal, terminal_ti
                     window_ref,
                     config,
                     move |selected_ids| {
-                        if selected_ids.is_empty() {
-                            return;
-                        }
-
                         let helper = match utils::detect_aur_helper() {
                             Some(h) => h,
                             None => {

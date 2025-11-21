@@ -80,7 +80,14 @@ fn show_gpu_driver_selection(button: &gtk4::Button, terminal: &Terminal, termina
         .confirm_label("Install");
 
         selection_dialog::show_selection_dialog(window_ref, config, move |selected_ids| {
-            if selected_ids.is_empty() {
+            // Check if both drivers are selected (conflict)
+            if selected_ids.contains(&"nvidia_closed".to_string())
+                && selected_ids.contains(&"nvidia_open".to_string())
+            {
+                warn!("Both NVIDIA drivers selected - conflict");
+                terminal_for_dialog.feed(
+                    b"\r\nERROR: Cannot install both closed and open source NVIDIA drivers.\r\nPlease select only one.\r\n",
+                );
                 return;
             }
 
@@ -96,7 +103,6 @@ fn show_gpu_driver_selection(button: &gtk4::Button, terminal: &Terminal, termina
 
             let mut commands = vec![];
 
-
             if selected_ids.contains(&"nvidia_closed".to_string()) {
                 commands.push(terminal::TerminalCommand::new(
                     helper,
@@ -104,41 +110,20 @@ fn show_gpu_driver_selection(button: &gtk4::Button, terminal: &Terminal, termina
                         "-S",
                         "--needed",
                         "--noconfirm",
-                        "linux-headers",
+                        "libvdpau",
+                        "egl-wayland",
                         "nvidia-dkms",
                         "nvidia-utils",
-                        "lib32-nvidia-utils",
+                        "opencl-nvidia",
+                        "libvdpau-va-gl",
                         "nvidia-settings",
                         "vulkan-icd-loader",
-                        "lib32-vulkan-icd-loader",
-                        "egl-wayland",
-                        "opencl-nvidia",
+                        "lib32-nvidia-utils",
                         "lib32-opencl-nvidia",
-                        "libvdpau-va-gl",
-                        "libvdpau",
                         "linux-firmware-nvidia",
+                        "lib32-vulkan-icd-loader",
                     ],
                 ));
-
-                commands.push(terminal::TerminalCommand::new("sudo",
-                    &["sh", "-c", "sed -i 's/\\(GRUB_CMDLINE_LINUX_DEFAULT=[\"'\\''']\\)/\\1nvidia-drm.modeset=1 /' /etc/default/grub"]));
-                commands.push(terminal::TerminalCommand::new(
-                    "sudo",
-                    &["grub-mkconfig", "-o", "/boot/grub/grub.cfg"],
-                ));
-                commands.push(terminal::TerminalCommand::new("sudo",
-                    &["sh", "-c", "sed -i 's/^MODULES=()/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf"]));
-                commands.push(terminal::TerminalCommand::new(
-                    "sudo",
-                    &[
-                        "systemctl",
-                        "enable",
-                        "nvidia-suspend.service",
-                        "nvidia-hibernate.service",
-                        "nvidia-resume.service",
-                    ],
-                ));
-                commands.push(terminal::TerminalCommand::new("sudo", &["mkinitcpio", "-P"]));
             }
 
             if selected_ids.contains(&"nvidia_open".to_string()) {
@@ -148,41 +133,28 @@ fn show_gpu_driver_selection(button: &gtk4::Button, terminal: &Terminal, termina
                         "-S",
                         "--needed",
                         "--noconfirm",
-                        "linux-headers",
-                        "nvidia-open-dkms",
-                        "nvidia-utils",
-                        "lib32-nvidia-utils",
-                        "nvidia-settings",
-                        "vulkan-icd-loader",
-                        "lib32-vulkan-icd-loader",
-                        "egl-wayland",
-                        "opencl-nvidia",
-                        "lib32-opencl-nvidia",
-                        "libvdpau-va-gl",
                         "libvdpau",
+                        "egl-wayland",
+                        "nvidia-utils",
+                        "opencl-nvidia",
+                        "libvdpau-va-gl",
+                        "nvidia-settings",
+                        "nvidia-open-dkms",
+                        "vulkan-icd-loader",
+                        "lib32-nvidia-utils",
+                        "lib32-opencl-nvidia",
                         "linux-firmware-nvidia",
+                        "lib32-vulkan-icd-loader",
                     ],
                 ));
+            }
 
-                commands.push(terminal::TerminalCommand::new("sudo",
-                    &["sh", "-c", "sed -i 's/\\(GRUB_CMDLINE_LINUX_DEFAULT=[\"'\\''']\\)/\\1nvidia-drm.modeset=1 /' /etc/default/grub"]));
+            // Run NVIDIA post-install configuration script (for either driver)
+            if !commands.is_empty() {
                 commands.push(terminal::TerminalCommand::new(
                     "sudo",
-                    &["grub-mkconfig", "-o", "/boot/grub/grub.cfg"],
+                    &["bash", "/opt/xero-toolkit/scripts/nv-setup.sh"],
                 ));
-                commands.push(terminal::TerminalCommand::new("sudo",
-                    &["sh", "-c", "sed -i 's/^MODULES=()/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf"]));
-                commands.push(terminal::TerminalCommand::new(
-                    "sudo",
-                    &[
-                        "systemctl",
-                        "enable",
-                        "nvidia-suspend.service",
-                        "nvidia-hibernate.service",
-                        "nvidia-resume.service",
-                    ],
-                ));
-                commands.push(terminal::TerminalCommand::new("sudo", &["mkinitcpio", "-P"]));
             }
 
             if !commands.is_empty() {
@@ -282,4 +254,3 @@ fn setup_asus_rog(page_builder: &Builder, terminal: &Terminal, terminal_title: &
         });
     }
 }
-
