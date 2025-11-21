@@ -4,7 +4,6 @@
 //! - System update
 //! - Package manager GUI installation
 //! - Driver installation (GPU, Tailscale, ASUS ROG)
-//! - Parallel downloads setup
 //! - External links (Discord, YouTube, Website, Donate)
 
 use crate::core;
@@ -21,7 +20,6 @@ use vte4::Terminal;
 pub fn setup_handlers(page_builder: &Builder, main_builder: &Builder) {
     setup_update_system_button(page_builder, main_builder);
     setup_pkg_manager_button(page_builder, main_builder);
-    setup_parallel_downloads_button(page_builder, main_builder);
     setup_install_drivers_button(page_builder, main_builder);
     setup_external_links(page_builder);
 }
@@ -99,45 +97,6 @@ fn setup_pkg_manager_button(page_builder: &Builder, main_builder: &Builder) {
             }
 
             show_pkg_manager_dialog(button, &terminal_clone, &title_clone);
-        });
-    }
-}
-
-/// Setup parallel downloads button
-fn setup_parallel_downloads_button(page_builder: &Builder, main_builder: &Builder) {
-    let terminal_output: Terminal = main_builder
-        .object("global_terminal_output_view")
-        .expect("Failed to get terminal output view");
-    let terminal_title: Label = main_builder
-        .object("global_terminal_title")
-        .expect("Failed to get terminal title label");
-
-    if let Some(btn_parallel_downloads) = page_builder.object::<Button>("btn_parallel_downloads") {
-        let terminal_clone = terminal_output.clone();
-        let title_clone = terminal_title.clone();
-        let button_clone = btn_parallel_downloads.clone();
-
-        btn_parallel_downloads.connect_clicked(move |_| {
-            info!("Main page: Setup Parallel Downloads button clicked");
-
-            if terminal::is_action_running() {
-                warn!("Action already running");
-                terminal_clone.feed(
-                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
-                );
-                return;
-            }
-
-            // Run pmpd to configure parallel downloads
-            let commands = vec![terminal::TerminalCommand::new("sudo", &["pmpd"])];
-
-            terminal::run_terminal_commands(
-                &button_clone,
-                &terminal_clone,
-                &title_clone,
-                commands,
-                "Setup Parallel Downloads",
-            );
         });
     }
 }

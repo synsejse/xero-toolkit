@@ -37,6 +37,7 @@ pub fn setup_handlers(page_builder: &Builder, main_builder: &Builder) {
     setup_fix_gpgme(&page_builder, &terminal_output, &terminal_title);
     setup_fix_arch_keyring(&page_builder, &terminal_output, &terminal_title);
     setup_update_mirrorlist(&page_builder, &terminal_output, &terminal_title);
+    setup_parallel_downloads(&page_builder, &terminal_output, &terminal_title);
 }
 
 fn setup_clr_pacman(page_builder: &Builder, terminal: &Terminal, terminal_title: &Label) {
@@ -373,6 +374,35 @@ fn setup_update_mirrorlist(page_builder: &Builder, terminal: &Terminal, terminal
                     },
                 );
             }
+        });
+    }
+}
+
+fn setup_parallel_downloads(page_builder: &Builder, terminal: &Terminal, terminal_title: &Label) {
+    if let Some(btn_parallel_downloads) = page_builder.object::<gtk4::Button>("btn_parallel_downloads") {
+        let terminal_clone = terminal.clone();
+        let title_clone = terminal_title.clone();
+
+        btn_parallel_downloads.connect_clicked(move |button| {
+            info!("Servicing: Change Parallel Downloads button clicked");
+
+            if terminal::is_action_running() {
+                warn!("Action already running");
+                terminal_clone.feed(
+                    b"\r\nAnother action is already running. Please wait for it to complete.\r\n",
+                );
+                return;
+            }
+
+            let commands = vec![terminal::TerminalCommand::new("sudo", &["pmpd"])];
+
+            terminal::run_terminal_commands(
+                button,
+                &terminal_clone,
+                &title_clone,
+                commands,
+                "Change Parallel Downloads",
+            );
         });
     }
 }

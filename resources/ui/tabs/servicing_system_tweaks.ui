@@ -155,6 +155,15 @@
                 <property name="css-classes">suggested-action</property>
               </object>
             </child>
+
+            <child>
+              <object class="GtkButton" id="btn_parallel_downloads">
+                <property name="label">Change Parallel Downloads</property>
+                <property name="width-request">200</property>
+                <property name="height-request">50</property>
+                <property name="css-classes">suggested-action</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>
