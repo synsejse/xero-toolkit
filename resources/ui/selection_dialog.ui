@@ -28,7 +28,7 @@
                 </child>
 
                 <child>
-                    <object class="GtkLabel" id="dialog_subtitle">
+                    <object class="GtkLabel" id="dialog_description">
                         <property name="label">Subtitle</property>
                         <property name="css-classes">dim</property>
                         <property name="wrap">true</property>
@@ -41,7 +41,10 @@
                         <property name="hexpand">true</property>
                         <property name="vexpand">true</property>
                         <child>
-                            <object class="GtkListBox" id="options_list"/>
+                            <object class="GtkBox" id="options_container">
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">8</property>
+                            </object>
                         </child>
                     </object>
                 </child>
