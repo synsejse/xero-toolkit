@@ -112,7 +112,7 @@ pub fn run_commands_with_progress(
     let on_complete = on_complete.map(|cb| Rc::new(cb) as Rc<dyn Fn(bool) + 'static>);
 
     let builder =
-        gtk4::Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/task_list_dialog.ui");
+        gtk4::Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/dialogs/task_list_dialog.ui");
 
     let window: Window = builder
         .object("task_window")

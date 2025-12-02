@@ -74,12 +74,12 @@ impl TaskItem {
             }
             TaskStatus::Success => {
                 self.spinner_icon.set_visible(false);
-                self.status_icon.set_resource(Some("/xyz/xerolinux/xero-toolkit/icons/scalable/actions/circle-check.svg"));
+                self.status_icon.set_icon_name(Some("circle-check"));
                 self.status_icon.set_visible(true);
             }
             TaskStatus::Failed => {
                 self.spinner_icon.set_visible(false);
-                self.status_icon.set_resource(Some("/xyz/xerolinux/xero-toolkit/icons/scalable/actions/circle-xmark.svg"));
+                self.status_icon.set_icon_name(Some("circle-xmark"));
                 self.status_icon.set_visible(true);
             }
         }

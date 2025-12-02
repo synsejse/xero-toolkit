@@ -234,7 +234,7 @@ pub fn show_xerolinux_error_dialog(main_window: &ApplicationWindow) {
 
     // Load error dialog from UI file
     let builder =
-        Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/xerolinux_check_dialog.ui");
+        Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/dialogs/xerolinux_check_dialog.ui");
 
     let error_window: gtk4::Window = builder
         .object("xerolinux_error_window")
@@ -271,7 +271,7 @@ pub fn show_dependency_error_dialog(
 
     // Load error dialog from UI file
     let builder =
-        Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/dependency_error_dialog.ui");
+        Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/dialogs/dependency_error_dialog.ui");
 
     let error_window: gtk4::Window = builder
         .object("dependency_error_window")

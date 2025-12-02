@@ -6,7 +6,7 @@ use super::download::{
 };
 use gtk4::glib;
 use gtk4::prelude::*;
-use gtk4::{Button, Entry, Label, ProgressBar, Window};
+use gtk4::{Button, Entry, Image, Label, ProgressBar, Window};
 use log::{error, info};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -16,22 +16,48 @@ pub fn show_download_dialog(parent: &Window) {
     info!("Opening Arch ISO download setup dialog");
 
     // Load the setup UI
-    let builder = gtk4::Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/download_setup_dialog.ui");
+    let builder = gtk4::Builder::from_resource(
+        "/xyz/xerolinux/xero-toolkit/ui/dialogs/download_setup_dialog.ui",
+    );
 
-    let window: adw::Window = builder.object("download_setup_window").expect("Failed to get download_setup_window");
-    let month_entry: Entry = builder.object("month_entry").expect("Failed to get month_entry");
-    let day_entry: Entry = builder.object("day_entry").expect("Failed to get day_entry");
-    let year_entry: Entry = builder.object("year_entry").expect("Failed to get year_entry");
-    let download_path_entry: Entry = builder.object("download_path_entry").expect("Failed to get download_path_entry");
-    let browse_button: Button = builder.object("browse_button").expect("Failed to get browse_button");
-    let cancel_button: Button = builder.object("cancel_button").expect("Failed to get cancel_button");
-    let start_download_button: Button = builder.object("start_download_button").expect("Failed to get start_download_button");
+    let window: adw::Window = builder
+        .object("download_setup_window")
+        .expect("Failed to get download_setup_window");
+    let month_entry: Entry = builder
+        .object("month_entry")
+        .expect("Failed to get month_entry");
+    let day_entry: Entry = builder
+        .object("day_entry")
+        .expect("Failed to get day_entry");
+    let year_entry: Entry = builder
+        .object("year_entry")
+        .expect("Failed to get year_entry");
+    let download_path_entry: Entry = builder
+        .object("download_path_entry")
+        .expect("Failed to get download_path_entry");
+    let browse_button: Button = builder
+        .object("browse_button")
+        .expect("Failed to get browse_button");
+    let cancel_button: Button = builder
+        .object("cancel_button")
+        .expect("Failed to get cancel_button");
+    let start_download_button: Button = builder
+        .object("start_download_button")
+        .expect("Failed to get start_download_button");
+    let fetching_spinner: Image = builder
+        .object("fetching_spinner")
+        .expect("Failed to get fetching_spinner");
+    let fetching_label: Label = builder
+        .object("fetching_label")
+        .expect("Failed to get fetching_label");
 
     window.set_transient_for(Some(parent));
 
     // State to hold ISO info
-    let iso_info: Arc<std::sync::Mutex<Option<(String, String)>>> = Arc::new(std::sync::Mutex::new(None));
-    let selected_path: Arc<std::sync::Mutex<Option<String>>> = Arc::new(std::sync::Mutex::new(None));
+    let iso_info: Arc<std::sync::Mutex<Option<(String, String)>>> =
+        Arc::new(std::sync::Mutex::new(None));
+    let selected_path: Arc<std::sync::Mutex<Option<String>>> =
+        Arc::new(std::sync::Mutex::new(None));
 
     // Setup cancel button
     let window_clone = window.clone();
@@ -51,7 +77,9 @@ pub fn show_download_dialog(parent: &Window) {
     let download_path_entry_clone = download_path_entry.clone();
     let iso_info_clone = iso_info.clone();
     let selected_path_clone = selected_path.clone();
-    let parent_clone = parent.clone();
+
+    let fetching_spinner_clone = fetching_spinner.clone();
+    let fetching_label_clone = fetching_label.clone();
 
     // Poll for ISO info result
     glib::timeout_add_local(std::time::Duration::from_millis(50), move || {
@@ -62,7 +90,10 @@ pub fn show_download_dialog(parent: &Window) {
                         info!("Fetched ISO info: {}", iso_name);
 
                         // Parse date from filename (archlinux-YYYY.MM.DD-x86_64.iso)
-                        if let Some(date_part) = iso_name.strip_prefix("archlinux-").and_then(|s| s.split('-').next()) {
+                        if let Some(date_part) = iso_name
+                            .strip_prefix("archlinux-")
+                            .and_then(|s| s.split('-').next())
+                        {
                             if let Some((year, month, day)) = parse_date_parts(date_part) {
                                 let month_name = get_month_name(month);
                                 month_entry_clone.set_text(month_name);
@@ -82,31 +113,45 @@ pub fn show_download_dialog(parent: &Window) {
                         browse_button_clone.set_sensitive(true);
 
                         // Set default download path
-                        let default_path = format!("{}/Downloads/{}", std::env::var("HOME").unwrap_or_else(|_| "/tmp".to_string()), iso_name);
+                        let default_path = format!(
+                            "{}/Downloads/{}",
+                            std::env::var("HOME").unwrap_or_else(|_| "/tmp".to_string()),
+                            iso_name
+                        );
                         download_path_entry_clone.set_text(&default_path);
                         *selected_path_clone.lock().unwrap() = Some(default_path);
 
                         // Enable start button
                         start_download_button_clone.set_sensitive(true);
+
+                        // Hide fetching indicator
+                        fetching_spinner_clone.set_visible(false);
+                        fetching_label_clone.set_visible(false);
                     }
                     Err(e) => {
                         error!("Failed to fetch ISO info: {}", e);
-                        month_entry_clone.set_text("Error");
-                        day_entry_clone.set_text("--");
-                        year_entry_clone.set_text("----");
-                        show_error_dialog(&parent_clone, "Failed to fetch ISO information", &e);
+
+                        // Show error state in the indicator
+                        fetching_spinner_clone.remove_css_class("spinning");
+                        fetching_spinner_clone.set_icon_name(Some("circle-xmark"));
+                        fetching_label_clone.set_text("Failed to fetch release info");
+                        fetching_label_clone.remove_css_class("dim-label");
+                        fetching_label_clone.add_css_class("error");
                     }
                 }
                 glib::ControlFlow::Break
             }
-            Err(std::sync::mpsc::TryRecvError::Empty) => {
-                glib::ControlFlow::Continue
-            }
+            Err(std::sync::mpsc::TryRecvError::Empty) => glib::ControlFlow::Continue,
             Err(std::sync::mpsc::TryRecvError::Disconnected) => {
                 error!("Channel disconnected unexpectedly");
-                month_entry_clone.set_text("Error");
-                day_entry_clone.set_text("--");
-                year_entry_clone.set_text("----");
+
+                // Show error state in the indicator
+                fetching_spinner_clone.remove_css_class("spinning");
+                fetching_spinner_clone.set_icon_name(Some("circle-xmark"));
+                fetching_label_clone.set_text("Failed to fetch release info");
+                fetching_label_clone.remove_css_class("dim-label");
+                fetching_label_clone.add_css_class("error");
+
                 glib::ControlFlow::Break
             }
         }
@@ -115,9 +160,7 @@ pub fn show_download_dialog(parent: &Window) {
     // Spawn thread to fetch ISO info
     std::thread::spawn(move || {
         let runtime = tokio::runtime::Runtime::new().unwrap();
-        let result = runtime.block_on(async {
-            fetch_arch_iso_info().await
-        });
+        let result = runtime.block_on(async { fetch_arch_iso_info().await });
         let result: Result<(String, String), String> = result.map_err(|e| e.to_string());
         let _ = tx.send(result);
     });
@@ -166,10 +209,17 @@ pub fn show_download_dialog(parent: &Window) {
         let iso_info_guard = iso_info.lock().unwrap();
         let selected_path_guard = selected_path.lock().unwrap();
 
-        if let (Some((iso_name, download_url)), Some(save_path)) = (iso_info_guard.as_ref(), selected_path_guard.as_ref()) {
+        if let (Some((iso_name, download_url)), Some(save_path)) =
+            (iso_info_guard.as_ref(), selected_path_guard.as_ref())
+        {
             info!("Starting download: {} -> {}", iso_name, save_path);
             window_clone.close();
-            start_download(&parent_clone, iso_name.clone(), download_url.clone(), save_path.clone());
+            start_download(
+                &parent_clone,
+                iso_name.clone(),
+                download_url.clone(),
+                save_path.clone(),
+            );
         }
     });
 
@@ -179,16 +229,33 @@ pub fn show_download_dialog(parent: &Window) {
 /// Start the actual download with progress dialog
 fn start_download(parent: &Window, iso_name: String, download_url: String, save_path: String) {
     // Load the UI
-    let builder = gtk4::Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/download_dialog.ui");
+    let builder =
+        gtk4::Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/dialogs/download_dialog.ui");
 
-    let window: adw::Window = builder.object("download_window").expect("Failed to get download_window");
-    let filename_label: Label = builder.object("filename_label").expect("Failed to get filename_label");
-    let progress_bar: ProgressBar = builder.object("progress_bar").expect("Failed to get progress_bar");
-    let speed_label: Label = builder.object("speed_label").expect("Failed to get speed_label");
-    let downloaded_label: Label = builder.object("downloaded_label").expect("Failed to get downloaded_label");
-    let time_remaining_label: Label = builder.object("time_remaining_label").expect("Failed to get time_remaining_label");
-    let pause_button: Button = builder.object("pause_button").expect("Failed to get pause_button");
-    let cancel_button: Button = builder.object("cancel_button").expect("Failed to get cancel_button");
+    let window: adw::Window = builder
+        .object("download_window")
+        .expect("Failed to get download_window");
+    let filename_label: Label = builder
+        .object("filename_label")
+        .expect("Failed to get filename_label");
+    let progress_bar: ProgressBar = builder
+        .object("progress_bar")
+        .expect("Failed to get progress_bar");
+    let speed_label: Label = builder
+        .object("speed_label")
+        .expect("Failed to get speed_label");
+    let downloaded_label: Label = builder
+        .object("downloaded_label")
+        .expect("Failed to get downloaded_label");
+    let time_remaining_label: Label = builder
+        .object("time_remaining_label")
+        .expect("Failed to get time_remaining_label");
+    let pause_button: Button = builder
+        .object("pause_button")
+        .expect("Failed to get pause_button");
+    let cancel_button: Button = builder
+        .object("cancel_button")
+        .expect("Failed to get cancel_button");
 
     window.set_transient_for(Some(parent));
 
@@ -364,4 +431,3 @@ fn get_month_name(month: u32) -> &'static str {
         _ => "Unknown",
     }
 }
-

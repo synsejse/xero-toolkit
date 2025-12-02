@@ -70,7 +70,8 @@ where
     info!("Opening selection dialog: {}", config.title);
 
     // Load the UI from resource
-    let builder = Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/selection_dialog.ui");
+    let builder =
+        Builder::from_resource("/xyz/xerolinux/xero-toolkit/ui/dialogs/selection_dialog.ui");
 
     // Get the dialog window
     let dialog: Window = builder

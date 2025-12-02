@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <requires lib="gtk" version="4.0"/>
-    <requires lib="adw" version="1.0"/>
+    <requires lib="gtk" version="4.0" />
+    <requires lib="adw" version="1.0" />
 
     <object class="AdwWindow" id="xerolinux_error_window">
-        <property name="title">Unsupported Distribution</property>
+        <property
+            name="title"
+        >Xero Toolkit - Unsupported Distribution</property>
+        <property name="icon-name">xero-toolkit</property>
         <property name="default-width">400</property>
         <property name="default-height">250</property>
         <property name="modal">true</property>
@@ -13,6 +16,7 @@
             <object class="AdwToolbarView">
                 <child type="top">
                     <object class="AdwHeaderBar">
+                        <property name="show-title">true</property>
                         <property name="show-end-title-buttons">false</property>
                     </object>
                 </child>
@@ -29,22 +33,34 @@
                         <!-- Title section with icon -->
                         <child>
                             <object class="GtkBox" id="title_box">
-                                <property name="orientation">horizontal</property>
+                                <property
+                                    name="orientation"
+                                >horizontal</property>
                                 <property name="spacing">10</property>
                                 <property name="halign">center</property>
 
                                 <child>
                                     <object class="GtkImage" id="error_icon">
-                                        <property name="icon-name">dialog-error</property>
-                                        <property name="pixel-size">48</property>
+                                        <property
+                                            name="icon-name"
+                                        >dialog-error</property>
+                                        <property
+                                            name="pixel-size"
+                                        >48</property>
                                     </object>
                                 </child>
 
                                 <child>
                                     <object class="GtkLabel" id="title_label">
-                                        <property name="label">Unsupported Distribution</property>
-                                        <property name="halign">center</property>
-                                        <property name="css-classes">title-2</property>
+                                        <property
+                                            name="label"
+                                        >Unsupported Distribution</property>
+                                        <property
+                                            name="halign"
+                                        >center</property>
+                                        <property
+                                            name="css-classes"
+                                        >title-2</property>
                                     </object>
                                 </child>
                             </object>
@@ -53,7 +69,9 @@
                         <!-- Main message -->
                         <child>
                             <object class="GtkLabel" id="main_message">
-                                <property name="label">This application is designed for XeroLinux.</property>
+                                <property
+                                    name="label"
+                                >This application is designed for XeroLinux.</property>
                                 <property name="halign">center</property>
                                 <property name="margin-top">10</property>
                             </object>
@@ -62,7 +80,9 @@
                         <!-- Distribution info -->
                         <child>
                             <object class="GtkLabel" id="distro_label">
-                                <property name="label">Current distribution: Unknown</property>
+                                <property
+                                    name="label"
+                                >Current distribution: Unknown</property>
                                 <property name="halign">center</property>
                                 <property name="use-markup">true</property>
                             </object>
@@ -71,7 +91,9 @@
                         <!-- Link -->
                         <child>
                             <object class="GtkLabel" id="link_label">
-                                <property name="label">For more info visit &lt;a href="https://xerolinux.xyz/"&gt;https://xerolinux.xyz/&lt;/a&gt;</property>
+                                <property
+                                    name="label"
+                                >For more info visit &lt;a href="https://xerolinux.xyz/"&gt;https://xerolinux.xyz/&lt;/a&gt;</property>
                                 <property name="use-markup">true</property>
                                 <property name="halign">center</property>
                                 <property name="margin-top">10</property>
@@ -81,14 +103,18 @@
                         <!-- Button section -->
                         <child>
                             <object class="GtkBox" id="button_box">
-                                <property name="orientation">horizontal</property>
+                                <property
+                                    name="orientation"
+                                >horizontal</property>
                                 <property name="halign">center</property>
                                 <property name="margin-top">20</property>
 
                                 <child>
                                     <object class="GtkButton" id="exit_button">
                                         <property name="label">Exit</property>
-                                        <property name="width-request">100</property>
+                                        <property
+                                            name="width-request"
+                                        >100</property>
                                     </object>
                                 </child>
                             </object>
@@ -99,4 +125,3 @@
         </property>
     </object>
 </interface>
-

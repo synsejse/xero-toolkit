@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <requires lib="gtk" version="4.0"/>
-    <requires lib="adw" version="1.0"/>
+    <requires lib="gtk" version="4.0" />
+    <requires lib="adw" version="1.0" />
 
     <object class="AdwWindow" id="selection_dialog">
-        <property name="title">Select Options</property>
+        <property name="title">Xero Toolkit - Select Options</property>
+        <property name="icon-name">xero-toolkit</property>
         <property name="default-width">600</property>
         <property name="default-height">480</property>
         <property name="modal">true</property>
@@ -13,6 +14,7 @@
             <object class="AdwToolbarView">
                 <child type="top">
                     <object class="AdwHeaderBar">
+                        <property name="show-title">true</property>
                         <property name="show-end-title-buttons">true</property>
                     </object>
                 </child>
@@ -49,8 +51,13 @@
                                 <property name="hexpand">true</property>
                                 <property name="vexpand">true</property>
                                 <child>
-                                    <object class="GtkBox" id="options_container">
-                                        <property name="orientation">vertical</property>
+                                    <object
+                                        class="GtkBox"
+                                        id="options_container"
+                                    >
+                                        <property
+                                            name="orientation"
+                                        >vertical</property>
                                         <property name="spacing">8</property>
                                     </object>
                                 </child>
@@ -59,20 +66,32 @@
 
                         <child>
                             <object class="GtkBox">
-                                <property name="orientation">horizontal</property>
+                                <property
+                                    name="orientation"
+                                >horizontal</property>
                                 <property name="spacing">8</property>
                                 <property name="halign">end</property>
 
                                 <child>
-                                    <object class="GtkButton" id="cancel_button">
+                                    <object
+                                        class="GtkButton"
+                                        id="cancel_button"
+                                    >
                                         <property name="label">Cancel</property>
                                     </object>
                                 </child>
 
                                 <child>
-                                    <object class="GtkButton" id="confirm_button">
-                                        <property name="label">Confirm</property>
-                                        <property name="css-classes">suggested-action</property>
+                                    <object
+                                        class="GtkButton"
+                                        id="confirm_button"
+                                    >
+                                        <property
+                                            name="label"
+                                        >Confirm</property>
+                                        <property
+                                            name="css-classes"
+                                        >suggested-action</property>
                                     </object>
                                 </child>
                             </object>
