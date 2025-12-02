@@ -93,7 +93,7 @@
                     </object>
                 </child>
 
-                <!-- Row 3: Test Scrolling -->
+                <!-- Row 3: Download Arch ISO -->
                 <child>
                     <object class="GtkBox">
                         <property name="orientation">horizontal</property>
@@ -101,8 +101,8 @@
                         <property name="halign">center</property>
 
                         <child>
-                            <object class="GtkButton" id="btn_test_scrolling">
-                                <property name="label">Test Scrolling</property>
+                            <object class="GtkButton" id="btn_download_arch_iso">
+                                <property name="label">Download Arch ISO</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
                                 <property name="css-classes">suggested-action</property>

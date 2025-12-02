@@ -18,8 +18,8 @@ use log::info;
 pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder) {
     setup_update_system_button(page_builder);
     setup_pkg_manager_button(page_builder);
+    setup_download_arch_iso_button(page_builder);
     setup_external_links(page_builder);
-    setup_test_scrolling_button(page_builder);
 }
 
 /// Setup system update button
@@ -61,6 +61,24 @@ fn setup_pkg_manager_button(page_builder: &Builder) {
     }
 }
 
+/// Setup download Arch ISO button
+fn setup_download_arch_iso_button(page_builder: &Builder) {
+    if let Some(btn_download) = page_builder.object::<Button>("btn_download_arch_iso") {
+        btn_download.connect_clicked(move |button| {
+            info!("Main page: Download Arch ISO button clicked");
+            let widget = button.clone().upcast::<gtk4::Widget>();
+            let window = widget
+                .root()
+                .and_then(|root| root.downcast::<ApplicationWindow>().ok());
+
+            if let Some(window) = window {
+                let window_ref = window.upcast_ref::<gtk4::Window>();
+                crate::ui::download_dialog::show_download_dialog(window_ref);
+            }
+        });
+    }
+}
+
 /// Setup external link buttons
 fn setup_external_links(page_builder: &Builder) {
     if let Some(link_discord) = page_builder.object::<Button>("link_discord") {
@@ -92,40 +110,6 @@ fn setup_external_links(page_builder: &Builder) {
     }
 }
 
-/// Setup test scrolling button
-fn setup_test_scrolling_button(page_builder: &Builder) {
-    if let Some(btn_test) = page_builder.object::<Button>("btn_test_scrolling") {
-        btn_test.connect_clicked(move |button| {
-            info!("Main page: Test Scrolling button clicked");
-            let widget = button.clone().upcast::<gtk4::Widget>();
-            let window = widget
-                .root()
-                .and_then(|root| root.downcast::<ApplicationWindow>().ok());
-
-            if let Some(window) = window {
-                let mut commands: Vec<progress_dialog::CommandStep> = Vec::new();
-
-                let total = 30;
-                for i in 1..=total {
-                    let name = format!("Step {}/{} – Waiting…", i, total);
-                    commands.push(progress_dialog::CommandStep::normal(
-                        "bash",
-                        &["-c", "sleep 0.2"],
-                        &name,
-                    ));
-                }
-
-                let window_ref = window.upcast_ref::<gtk4::Window>();
-                progress_dialog::run_commands_with_progress(
-                    window_ref,
-                    commands,
-                    "Scrolling Test",
-                    None,
-                );
-            }
-        });
-    }
-}
 
 /// Show package manager selection dialog
 fn show_pkg_manager_dialog(button: &Button) {

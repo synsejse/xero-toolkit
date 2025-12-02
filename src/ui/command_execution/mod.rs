@@ -123,6 +123,9 @@ pub fn run_commands_with_progress(
     let task_list_container: gtk4::Box = builder
         .object("task_list_container")
         .expect("Failed to get task_list_container");
+    let scrolled_window: gtk4::ScrolledWindow = builder
+        .object("task_scrolled_window")
+        .expect("Failed to get task_scrolled_window");
     let cancel_button: Button = builder
         .object("cancel_button")
         .expect("Failed to get cancel_button");
@@ -151,6 +154,7 @@ pub fn run_commands_with_progress(
         window: window.clone(),
         title_label,
         task_list_container,
+        scrolled_window,
         cancel_button: cancel_button.clone(),
         close_button: close_button.clone(),
         task_items,

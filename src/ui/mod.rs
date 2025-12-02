@@ -6,10 +6,14 @@
 //! - `tabs`: Tab navigation and management
 //! - `command_execution`: Command execution flow with progress UI
 //! - `selection_dialog`: Reusable multi-choice selection dialogs
+//! - `download`: File download functionality
+//! - `download_dialog`: Download dialog UI
 
 pub mod app;
 pub mod command_execution;
 pub mod dialogs;
+pub mod download;
+pub mod download_dialog;
 pub mod pages;
 pub mod selection_dialog;
 pub mod tabs;

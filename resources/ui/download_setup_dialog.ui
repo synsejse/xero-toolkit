@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<interface>
+    <requires lib="gtk" version="4.0"/>
+    <requires lib="adw" version="1.0"/>
+
+    <object class="AdwWindow" id="download_setup_window">
+        <property name="default-width">600</property>
+        <property name="default-height">300</property>
+        <property name="modal">true</property>
+        <property name="resizable">false</property>
+
+        <property name="content">
+            <object class="GtkBox">
+                <property name="orientation">vertical</property>
+
+                <!-- Header Bar -->
+                <child>
+                    <object class="AdwHeaderBar" id="header_bar">
+                        <property name="show-title">false</property>
+                    </object>
+                </child>
+
+                <!-- Main Content -->
+                <child>
+                    <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">24</property>
+                        <property name="margin-top">32</property>
+                        <property name="margin-bottom">32</property>
+                        <property name="margin-start">32</property>
+                        <property name="margin-end">32</property>
+                        <property name="vexpand">true</property>
+                        <property name="valign">center</property>
+
+                        <!-- Title -->
+                        <child>
+                            <object class="GtkLabel">
+                                <property name="label">Download Arch Linux ISO</property>
+                                <property name="css-classes">title-1</property>
+                                <property name="halign">center</property>
+                            </object>
+                        </child>
+
+                        <!-- Setup Container -->
+                        <child>
+                            <object class="GtkBox">
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">20</property>
+                                <property name="css-classes">card</property>
+                                <property name="margin-top">12</property>
+                                <property name="margin-bottom">12</property>
+                                <property name="margin-start">12</property>
+                                <property name="margin-end">12</property>
+
+                                <!-- Release Date Section -->
+                                <child>
+                                    <object class="GtkBox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">8</property>
+                                        <property name="margin-top">16</property>
+                                        <property name="margin-start">16</property>
+                                        <property name="margin-end">16</property>
+
+                                        <child>
+                                            <object class="GtkLabel">
+                                                <property name="label">Release Date</property>
+                                                <property name="css-classes">heading</property>
+                                                <property name="halign">start</property>
+                                            </object>
+                                        </child>
+
+                                        <child>
+                                            <object class="GtkBox">
+                                                <property name="orientation">horizontal</property>
+                                                <property name="spacing">12</property>
+
+                                                <child>
+                                                    <object class="GtkEntry" id="month_entry">
+                                                        <property name="editable">false</property>
+                                                        <property name="placeholder-text">Month</property>
+                                                        <property name="hexpand">true</property>
+                                                    </object>
+                                                </child>
+
+                                                <child>
+                                                    <object class="GtkEntry" id="day_entry">
+                                                        <property name="editable">false</property>
+                                                        <property name="placeholder-text">Day</property>
+                                                        <property name="width-request">80</property>
+                                                    </object>
+                                                </child>
+
+                                                <child>
+                                                    <object class="GtkEntry" id="year_entry">
+                                                        <property name="editable">false</property>
+                                                        <property name="placeholder-text">Year</property>
+                                                        <property name="width-request">100</property>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
+
+                                <!-- Download Path Section -->
+                                <child>
+                                    <object class="GtkBox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">8</property>
+                                        <property name="margin-start">16</property>
+                                        <property name="margin-end">16</property>
+                                        <property name="margin-bottom">16</property>
+
+                                        <child>
+                                            <object class="GtkLabel">
+                                                <property name="label">Download Path</property>
+                                                <property name="css-classes">heading</property>
+                                                <property name="halign">start</property>
+                                            </object>
+                                        </child>
+
+                                        <child>
+                                            <object class="GtkBox">
+                                                <property name="orientation">horizontal</property>
+                                                <property name="spacing">12</property>
+
+                                                <child>
+                                                    <object class="GtkEntry" id="download_path_entry">
+                                                        <property name="editable">false</property>
+                                                        <property name="placeholder-text">Select download location...</property>
+                                                        <property name="hexpand">true</property>
+                                                    </object>
+                                                </child>
+
+                                                <child>
+                                                    <object class="GtkButton" id="browse_button">
+                                                        <property name="label">Browse...</property>
+                                                        <property name="sensitive">false</property>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+
+                        <!-- Action Buttons -->
+                        <child>
+                            <object class="GtkBox">
+                                <property name="orientation">horizontal</property>
+                                <property name="spacing">12</property>
+                                <property name="halign">center</property>
+
+                                <child>
+                                    <object class="GtkButton" id="cancel_button">
+                                        <property name="label">Cancel</property>
+                                        <property name="width-request">100</property>
+                                        <property name="height-request">40</property>
+                                    </object>
+                                </child>
+
+                                <child>
+                                    <object class="GtkButton" id="start_download_button">
+                                        <property name="label">Start Download</property>
+                                        <property name="width-request">150</property>
+                                        <property name="height-request">40</property>
+                                        <property name="css-classes">suggested-action</property>
+                                        <property name="sensitive">false</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </property>
+    </object>
+</interface>
+
