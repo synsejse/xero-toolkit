@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <requires lib="gtk" version="4.0"/>
+    <requires lib="gtk" version="4.0" />
 
     <object class="GtkBox" id="page_gaming_tools">
         <property name="orientation">vertical</property>
@@ -40,7 +40,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property
-                                name="label"
+                            name="label"
                         >Optimize, configure &amp; enhance your Linux gaming experience
                         </property>
                         <property name="css-classes">dim</property>
@@ -71,7 +71,9 @@
                                 <property name="label">Steam AiO</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -89,7 +91,9 @@
                                 <property name="label">Controllers</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
@@ -98,7 +102,9 @@
                                 <property name="label">Gamescope CFG</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
@@ -107,7 +113,9 @@
                                 <property name="label">LACT OC</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -125,7 +133,9 @@
                                 <property name="label">Lutris</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
@@ -134,7 +144,9 @@
                                 <property name="label">Heroic</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
@@ -143,7 +155,9 @@
                                 <property name="label">Bottles</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>

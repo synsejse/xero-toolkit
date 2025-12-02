@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <requires lib="gtk" version="4.0"/>
+    <requires lib="gtk" version="4.0" />
 
     <object class="GtkBox" id="page_multimedia_tools">
         <property name="orientation">vertical</property>
@@ -39,7 +39,9 @@
 
                 <child>
                     <object class="GtkLabel">
-                        <property name="label">Manage multimedia applications and media servers</property>
+                        <property
+                            name="label"
+                        >Manage multimedia applications and media servers</property>
                         <property name="css-classes">dim</property>
                         <property name="halign">center</property>
                         <property name="wrap">true</property>
@@ -70,16 +72,22 @@
                                 <property name="label">OBS-Studio AiO</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
                         <child>
                             <object class="GtkButton" id="btn_jellyfin">
-                                <property name="label">Jellyfin Server</property>
+                                <property
+                                    name="label"
+                                >Jellyfin Server</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>

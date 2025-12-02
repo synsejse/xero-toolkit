@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <requires lib="gtk" version="4.0"/>
+    <requires lib="gtk" version="4.0" />
 
     <object class="GtkBox" id="page_main_page">
         <property name="orientation">vertical</property>
@@ -39,7 +39,9 @@
 
                 <child>
                     <object class="GtkLabel">
-                        <property name="label">Your comprehensive system management and customization hub</property>
+                        <property
+                            name="label"
+                        >Your comprehensive system management and customization hub</property>
                         <property name="css-classes">dim</property>
                         <property name="halign">center</property>
                         <property name="wrap">true</property>
@@ -69,7 +71,9 @@
                                 <property name="label">Update System</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -84,10 +88,14 @@
 
                         <child>
                             <object class="GtkButton" id="btn_pkg_manager">
-                                <property name="label">PKG Manager GUI</property>
+                                <property
+                                    name="label"
+                                >PKG Manager GUI</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -101,11 +109,18 @@
                         <property name="halign">center</property>
 
                         <child>
-                            <object class="GtkButton" id="btn_download_arch_iso">
-                                <property name="label">Download Arch ISO</property>
+                            <object
+                                class="GtkButton"
+                                id="btn_download_arch_iso"
+                            >
+                                <property
+                                    name="label"
+                                >Download Arch ISO</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -131,13 +146,17 @@
 
                 <child>
                     <object class="GtkButton" id="link_discord">
-                        <property name="tooltip-text">Discord - https://discord.xerolinux.xyz/</property>
+                        <property
+                            name="tooltip-text"
+                        >Discord - https://discord.xerolinux.xyz/</property>
                         <property name="width-request">48</property>
                         <property name="height-request">48</property>
                         <property name="css-classes">circular flat</property>
                         <child>
                             <object class="GtkImage">
-                                <property name="icon-name">discord-symbolic</property>
+                                <property
+                                    name="icon-name"
+                                >discord-symbolic</property>
                                 <property name="pixel-size">24</property>
                             </object>
                         </child>
@@ -146,13 +165,17 @@
 
                 <child>
                     <object class="GtkButton" id="link_youtube">
-                        <property name="tooltip-text">YouTube - https://www.youtube.com/@XeroLinux</property>
+                        <property
+                            name="tooltip-text"
+                        >YouTube - https://www.youtube.com/@XeroLinux</property>
                         <property name="width-request">48</property>
                         <property name="height-request">48</property>
                         <property name="css-classes">circular flat</property>
                         <child>
                             <object class="GtkImage">
-                                <property name="icon-name">youtube-symbolic</property>
+                                <property
+                                    name="icon-name"
+                                >youtube-symbolic</property>
                                 <property name="pixel-size">24</property>
                             </object>
                         </child>
@@ -161,13 +184,17 @@
 
                 <child>
                     <object class="GtkButton" id="link_website">
-                        <property name="tooltip-text">XeroLinux Website - https://xerolinux.xyz/</property>
+                        <property
+                            name="tooltip-text"
+                        >XeroLinux Website - https://xerolinux.xyz/</property>
                         <property name="width-request">48</property>
                         <property name="height-request">48</property>
                         <property name="css-classes">circular flat</property>
                         <child>
                             <object class="GtkImage">
-                                <property name="icon-name">globe-symbolic</property>
+                                <property
+                                    name="icon-name"
+                                >globe-symbolic</property>
                                 <property name="pixel-size">24</property>
                             </object>
                         </child>
@@ -176,13 +203,17 @@
 
                 <child>
                     <object class="GtkButton" id="link_donate">
-                        <property name="tooltip-text">Donate - https://ko-fi.com/xerolinux</property>
+                        <property
+                            name="tooltip-text"
+                        >Donate - https://ko-fi.com/xerolinux</property>
                         <property name="width-request">48</property>
                         <property name="height-request">48</property>
                         <property name="css-classes">circular flat</property>
                         <child>
                             <object class="GtkImage">
-                                <property name="icon-name">coffee-symbolic</property>
+                                <property
+                                    name="icon-name"
+                                >coffee-symbolic</property>
                                 <property name="pixel-size">24</property>
                             </object>
                         </child>

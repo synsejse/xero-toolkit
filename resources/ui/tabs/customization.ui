@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <requires lib="gtk" version="4.0"/>
+    <requires lib="gtk" version="4.0" />
 
     <object class="GtkBox" id="page_customization">
         <property name="orientation">vertical</property>
@@ -39,7 +39,9 @@
 
                 <child>
                     <object class="GtkLabel">
-                        <property name="label">Customize your system appearance and behavior</property>
+                        <property
+                            name="label"
+                        >Customize your system appearance and behavior</property>
                         <property name="css-classes">dim</property>
                         <property name="halign">center</property>
                         <property name="wrap">true</property>
@@ -70,16 +72,22 @@
                                 <property name="label">Setup ZSH AiO</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
                         <child>
                             <object class="GtkButton" id="btn_save_desktop">
-                                <property name="label">Save Desktop Tool</property>
+                                <property
+                                    name="label"
+                                >Save Desktop Tool</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -97,25 +105,35 @@
                                 <property name="label">GRUB Theme</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
                         <child>
                             <object class="GtkButton" id="btn_wallpapers">
-                                <property name="label">Plasma Wallpapers</property>
+                                <property
+                                    name="label"
+                                >Plasma Wallpapers</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
                         <child>
                             <object class="GtkButton" id="btn_layan_patch">
-                                <property name="label">Layan GTK4 Patch</property>
+                                <property
+                                    name="label"
+                                >Layan GTK4 Patch</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <requires lib="gtk" version="4.0"/>
+    <requires lib="gtk" version="4.0" />
 
     <object class="GtkBox" id="page_drivers">
         <property name="orientation">vertical</property>
@@ -31,7 +31,9 @@
 
                 <child>
                     <object class="GtkLabel">
-                        <property name="label">Drivers &amp; Hardware Tools</property>
+                        <property
+                            name="label"
+                        >Drivers &amp; Hardware Tools</property>
                         <property name="css-classes">title-1</property>
                         <property name="halign">center</property>
                     </object>
@@ -39,7 +41,9 @@
 
                 <child>
                     <object class="GtkLabel">
-                        <property name="label">Install and configure drivers and hardware-specific tools</property>
+                        <property
+                            name="label"
+                        >Install and configure drivers and hardware-specific tools</property>
                         <property name="css-classes">dim</property>
                         <property name="halign">center</property>
                         <property name="wrap">true</property>
@@ -70,7 +74,9 @@
                                 <property name="label">NVIDIA Drivers</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
@@ -79,7 +85,9 @@
                                 <property name="label">Tailscale VPN</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
@@ -88,7 +96,9 @@
                                 <property name="label">ASUS ROG Tools</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -97,4 +107,3 @@
         </child>
     </object>
 </interface>
-

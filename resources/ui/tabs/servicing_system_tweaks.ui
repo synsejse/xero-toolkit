@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <requires lib="gtk" version="4.0"/>
+    <requires lib="gtk" version="4.0" />
 
     <object class="GtkBox" id="page_servicing_system_tweaks">
         <property name="orientation">vertical</property>
@@ -31,7 +31,9 @@
 
                 <child>
                     <object class="GtkLabel">
-                        <property name="label">Servicing / System Tweaks</property>
+                        <property
+                            name="label"
+                        >Servicing / System Tweaks</property>
                         <property name="css-classes">title-1</property>
                         <property name="halign">center</property>
                     </object>
@@ -39,7 +41,9 @@
 
                 <child>
                     <object class="GtkLabel">
-                        <property name="label">System maintenance, repair and performance tweaks</property>
+                        <property
+                            name="label"
+                        >System maintenance, repair and performance tweaks</property>
                         <property name="css-classes">dim</property>
                         <property name="halign">center</property>
                         <property name="wrap">true</property>
@@ -67,28 +71,40 @@
 
                         <child>
                             <object class="GtkButton" id="btn_clr_pacman">
-                                <property name="label">Clear Pacman Cache</property>
+                                <property
+                                    name="label"
+                                >Clear Pacman Cache</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
                         <child>
                             <object class="GtkButton" id="btn_unlock_pacman">
-                                <property name="label">Unlock Pacman DB</property>
+                                <property
+                                    name="label"
+                                >Unlock Pacman DB</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
                         <child>
                             <object class="GtkButton" id="btn_plasma_x11">
-                                <property name="label">Plasma X11 Session</property>
+                                <property
+                                    name="label"
+                                >Plasma X11 Session</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -106,7 +122,9 @@
                                 <property name="label">VM Guest Utils</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
@@ -115,16 +133,22 @@
                                 <property name="label">WayDroid Guide</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
                         <child>
                             <object class="GtkButton" id="btn_fix_gpgme">
-                                <property name="label">Fix GPGME Database</property>
+                                <property
+                                    name="label"
+                                >Fix GPGME Database</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -140,28 +164,46 @@
 
                         <child>
                             <object class="GtkButton" id="btn_fix_arch_keyring">
-                                <property name="label">Fix Arch Keyring</property>
+                                <property
+                                    name="label"
+                                >Fix Arch Keyring</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
                         <child>
-                            <object class="GtkButton" id="btn_update_mirrorlist">
-                                <property name="label">Update Mirrorlist</property>
+                            <object
+                                class="GtkButton"
+                                id="btn_update_mirrorlist"
+                            >
+                                <property
+                                    name="label"
+                                >Update Mirrorlist</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
                         <child>
-                            <object class="GtkButton" id="btn_parallel_downloads">
-                                <property name="label">Change Parallel Downloads</property>
+                            <object
+                                class="GtkButton"
+                                id="btn_parallel_downloads"
+                            >
+                                <property
+                                    name="label"
+                                >Change Parallel Downloads</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>

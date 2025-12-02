@@ -4,7 +4,7 @@
 //! multiple options to select from, with customizable title, description, and actions.
 
 use gtk4::prelude::*;
-use gtk4::{Box as GtkBox, Builder, Button, CheckButton, Label, Window};
+use gtk4::{Box as GtkBox, Builder, Button, CheckButton, Label, Separator, Window};
 use log::info;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -120,26 +120,45 @@ where
         // Disable confirm button
         confirm_button.set_sensitive(false);
     } else {
-        for option in available_options {
-            let option_box = GtkBox::new(gtk4::Orientation::Vertical, 4);
-            option_box.set_margin_start(12);
-            option_box.set_margin_end(12);
+        for (i, option) in available_options.iter().enumerate() {
+            // Horizontal box: checkbox on left, text on right
+            let option_row = GtkBox::new(gtk4::Orientation::Horizontal, 12);
+            option_row.set_margin_start(12);
+            option_row.set_margin_end(12);
+            option_row.set_margin_top(8);
+            option_row.set_margin_bottom(8);
 
-            let checkbox = CheckButton::with_label(&option.label);
+            let checkbox = CheckButton::new();
             checkbox.set_active(false);
+
+            // Vertical box for title and description
+            let text_box = GtkBox::new(gtk4::Orientation::Vertical, 4);
+            text_box.set_hexpand(true);
+
+            let title_label = Label::new(Some(&option.label));
+            title_label.set_halign(gtk4::Align::Start);
+            title_label.set_wrap(true);
 
             let desc_label = Label::new(Some(&option.description));
             desc_label.set_css_classes(&["dim", "caption"]);
             desc_label.set_halign(gtk4::Align::Start);
-            desc_label.set_margin_start(24);
             desc_label.set_wrap(true);
 
-            option_box.append(&checkbox);
-            option_box.append(&desc_label);
+            text_box.append(&title_label);
+            text_box.append(&desc_label);
 
-            options_container.append(&option_box);
+            option_row.append(&checkbox);
+            option_row.append(&text_box);
 
-            checkboxes.borrow_mut().push((option.id, checkbox));
+            options_container.append(&option_row);
+
+            // Add separator between options (not after the last one)
+            if i < available_options.len() - 1 {
+                let sep = Separator::new(gtk4::Orientation::Horizontal);
+                options_container.append(&sep);
+            }
+
+            checkboxes.borrow_mut().push((option.id.clone(), checkbox));
         }
     }
 

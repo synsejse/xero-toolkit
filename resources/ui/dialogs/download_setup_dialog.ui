@@ -12,18 +12,15 @@
         <property name="resizable">false</property>
 
         <property name="content">
-            <object class="GtkBox">
-                <property name="orientation">vertical</property>
-
-                <!-- Header Bar -->
-                <child>
+            <object class="AdwToolbarView">
+                <child type="top">
                     <object class="AdwHeaderBar" id="header_bar">
                         <property name="show-title">true</property>
+                        <property name="show-end-title-buttons">true</property>
                     </object>
                 </child>
 
-                <!-- Main Content -->
-                <child>
+                <property name="content">
                     <object class="GtkBox">
                         <property name="orientation">vertical</property>
                         <property name="spacing">24</property>
@@ -328,7 +325,7 @@
                             </object>
                         </child>
                     </object>
-                </child>
+                </property>
             </object>
         </property>
     </object>

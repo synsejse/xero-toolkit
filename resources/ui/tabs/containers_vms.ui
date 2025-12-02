@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <interface>
-    <requires lib="gtk" version="4.0"/>
+    <requires lib="gtk" version="4.0" />
 
     <object class="GtkBox" id="page_containers_vms">
         <property name="orientation">vertical</property>
@@ -40,7 +40,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property
-                                name="label"
+                            name="label"
                         >Manage containers and virtual machines
                         </property>
                         <property name="css-classes">dim</property>
@@ -71,7 +71,9 @@
                                 <property name="label">Docker</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -89,7 +91,9 @@
                                 <property name="label">Podman</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
@@ -98,7 +102,9 @@
                                 <property name="label">vBox</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
 
@@ -107,7 +113,9 @@
                                 <property name="label">DistroBox</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
@@ -123,7 +131,9 @@
                                 <property name="label">KVM</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
-                                <property name="css-classes">suggested-action</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
                             </object>
                         </child>
                     </object>
