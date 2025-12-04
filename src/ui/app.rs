@@ -57,6 +57,8 @@ fn setup_resources_and_theme() {
         info!("Setting up UI theme and styling");
 
         let theme = gtk4::IconTheme::for_display(&display);
+        // Don't inherit system icon themes
+        theme.set_search_path(&[]);
         theme.add_resource_path("/xyz/xerolinux/xero-toolkit/icons");
         info!("Icon theme paths configured");
 

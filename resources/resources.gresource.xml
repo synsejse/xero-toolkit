@@ -97,5 +97,6 @@
         <file
             compressed="true"
         >icons/scalable/actions/nvidia-symbolic.svg</file>
+        <file compressed="true">icons/scalable/apps/xero-toolkit.png</file>
     </gresource>
 </gresources>
