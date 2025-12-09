@@ -77,6 +77,39 @@
                                         <property name="valign">start</property>
                                     </object>
                                 </child>
+
+                                <!-- Spacer to push autostart toggle to bottom -->
+                                <child>
+                                    <object class="GtkBox">
+                                        <property name="vexpand">true</property>
+                                    </object>
+                                </child>
+
+                                <!-- Autostart Toggle -->
+                                <child>
+                                    <object class="GtkBox">
+                                        <property name="orientation">horizontal</property>
+                                        <property name="spacing">8</property>
+                                        <property name="margin-start">12</property>
+                                        <property name="margin-end">12</property>
+                                        <property name="margin-bottom">12</property>
+
+                                        <child>
+                                            <object class="GtkLabel">
+                                                <property name="label">Start on Login</property>
+                                                <property name="hexpand">true</property>
+                                                <property name="xalign">0</property>
+                                                <property name="css-classes">dim</property>
+                                            </object>
+                                        </child>
+
+                                        <child>
+                                            <object class="GtkSwitch" id="switch_autostart">
+                                                <property name="valign">center</property>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
                             </object>
                         </child>
 

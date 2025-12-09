@@ -39,8 +39,8 @@ fn setup_clr_pacman(page_builder: &Builder) {
         btn_clr_pacman.connect_clicked(move |button| {
             info!("Servicing: Clear Pacman Cache button clicked");
             let commands = vec![Command::privileged(
-                "pacman",
-                &["-Scc"],
+                "sh",
+                &["-c", "yes | pacman -Scc"],
                 "Clearing Pacman cache (full clean)...",
             )];
             let widget = button.clone().upcast::<gtk4::Widget>();
@@ -327,3 +327,5 @@ fn setup_parallel_downloads(page_builder: &Builder) {
         });
     }
 }
+
+

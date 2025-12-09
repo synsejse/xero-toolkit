@@ -105,6 +105,9 @@ fn setup_ui_components(builder: &Builder, stack: Stack) -> AppContext {
     let tabs_container = extract_widget(builder, "tabs_container");
     let main_paned = extract_widget(builder, "main_paned");
 
+    // Set up autostart toggle in sidebar
+    setup_autostart_toggle(builder);
+
     info!("All UI components successfully initialized from UI builder");
 
     let ui = UiComponents::new(stack, tabs_container, main_paned);
@@ -114,3 +117,29 @@ fn setup_ui_components(builder: &Builder, stack: Stack) -> AppContext {
 
     AppContext::new(ui)
 }
+
+/// Set up the autostart toggle switch in the sidebar.
+fn setup_autostart_toggle(builder: &Builder) {
+    if let Some(switch) = builder.object::<gtk4::Switch>("switch_autostart") {
+        // Set initial state based on whether autostart is enabled
+        switch.set_active(core::autostart::is_enabled());
+
+        switch.connect_state_set(move |_switch, state| {
+            info!("Autostart toggle changed to: {}", state);
+
+            let result = if state {
+                core::autostart::enable()
+            } else {
+                core::autostart::disable()
+            };
+
+            if let Err(e) = result {
+                warn!("Failed to {} autostart: {}", if state { "enable" } else { "disable" }, e);
+            }
+
+            // Return Propagation::Proceed to allow the switch to update its state
+            glib::Propagation::Proceed
+        });
+    }
+}
+

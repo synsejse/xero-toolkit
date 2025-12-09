@@ -7,6 +7,7 @@
 //! - `system_check`: System dependency and distribution validation
 
 pub mod aur;
+pub mod autostart;
 pub mod download;
 pub mod package;
 pub mod system_check;
