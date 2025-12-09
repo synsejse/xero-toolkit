@@ -2,15 +2,10 @@
 //!
 //! Handles:
 //! - Steam AiO installation
-//! - Game controller drivers
 //! - Gamescope configuration
 //! - LACT GPU overclocking
 //! - Game launchers (Lutris, Heroic, Bottles)
 
-use crate::core;
-use crate::ui::dialogs::selection::{
-    show_selection_dialog, SelectionDialogConfig, SelectionOption,
-};
 use crate::ui::task_runner::{self, Command};
 use gtk4::prelude::*;
 use gtk4::{ApplicationWindow, Builder, Button};
@@ -19,7 +14,6 @@ use log::info;
 /// Set up all button handlers for the gaming tools page.
 pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder) {
     setup_steam_aio(page_builder);
-    setup_controllers(page_builder);
     setup_gamescope_cfg(page_builder);
     setup_lact_oc(page_builder);
     setup_lutris(page_builder);
@@ -119,102 +113,6 @@ fn setup_steam_aio(builder: &Builder) {
             None,
         );
     });
-}
-
-fn setup_controllers(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_controllers") else {
-        return;
-    };
-
-    button.connect_clicked(move |btn| {
-        info!("Controllers button clicked");
-
-        let Some(window) = get_window(btn) else {
-            return;
-        };
-
-        let window_clone = window.clone();
-
-        let config = SelectionDialogConfig::new(
-            "Game Controller Drivers",
-            "Select which controller drivers to install.",
-        )
-        .add_option(SelectionOption::new(
-            "dualsense",
-            "DualSense Controller",
-            "PlayStation 5 DualSense controller driver",
-            core::is_package_installed("dualsensectl"),
-        ))
-        .add_option(SelectionOption::new(
-            "dualshock4",
-            "DualShock 4 Controller",
-            "PlayStation 4 DualShock 4 controller driver",
-            core::is_package_installed("ds4drv"),
-        ))
-        .add_option(SelectionOption::new(
-            "xboxone",
-            "Xbox One Controller",
-            "Xbox One wireless controller driver",
-            core::is_package_installed("xone-dkms"),
-        ))
-        .confirm_label("Install");
-
-        show_selection_dialog(window.upcast_ref(), config, move |selected| {
-            let commands = build_controller_commands(&selected);
-
-            if !commands.is_empty() {
-                task_runner::run(
-                    window_clone.upcast_ref(),
-                    commands,
-                    "Controller Driver Installation",
-                    None,
-                );
-            }
-        });
-    });
-}
-
-/// Build commands for selected controller drivers.
-fn build_controller_commands(selected: &[String]) -> Vec<Command> {
-    let mut commands = Vec::new();
-
-    for id in selected {
-        match id.as_str() {
-            "dualsense" => commands.push(Command::aur(
-                &[
-                    "-S",
-                    "--noconfirm",
-                    "--needed",
-                    "dualsensectl",
-                    "game-devices-udev",
-                ],
-                "Installing DualSense driver...",
-            )),
-            "dualshock4" => commands.push(Command::aur(
-                &[
-                    "-S",
-                    "--noconfirm",
-                    "--needed",
-                    "ds4drv",
-                    "game-devices-udev",
-                ],
-                "Installing DualShock 4 driver...",
-            )),
-            "xboxone" => commands.push(Command::aur(
-                &[
-                    "-S",
-                    "--noconfirm",
-                    "--needed",
-                    "xone-dkms",
-                    "game-devices-udev",
-                ],
-                "Installing Xbox One controller driver...",
-            )),
-            _ => {}
-        }
-    }
-
-    commands
 }
 
 fn setup_gamescope_cfg(builder: &Builder) {

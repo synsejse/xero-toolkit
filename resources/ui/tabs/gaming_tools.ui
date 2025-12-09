@@ -61,25 +61,7 @@
                 <property name="vexpand">true</property>
                 <property name="margin-top">32</property>
 
-                <!-- Row 1: Steam AiO -->
-                <child>
-                    <object class="GtkBox">
-                        <property name="orientation">horizontal</property>
-                        <property name="halign">center</property>
-                        <child>
-                            <object class="GtkButton" id="btn_steam_aio">
-                                <property name="label">Steam AiO</property>
-                                <property name="width-request">200</property>
-                                <property name="height-request">50</property>
-                                <property
-                                    name="css-classes"
-                                >suggested-action pill</property>
-                            </object>
-                        </child>
-                    </object>
-                </child>
-
-                <!-- Row 2: Controllers, Gamescope CFG, LACT OC -->
+                <!-- Row 1: Steam AiO, Gamescope CFG, LACT OC -->
                 <child>
                     <object class="GtkBox">
                         <property name="orientation">horizontal</property>
@@ -87,8 +69,8 @@
                         <property name="halign">center</property>
 
                         <child>
-                            <object class="GtkButton" id="btn_controllers">
-                                <property name="label">Controllers</property>
+                            <object class="GtkButton" id="btn_steam_aio">
+                                <property name="label">Steam AiO</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
                                 <property
@@ -121,7 +103,7 @@
                     </object>
                 </child>
 
-                <!-- Row 3: Lutris, Heroic, Bottles (split from combined button) -->
+                <!-- Row 2: Lutris, Heroic, Bottles -->
                 <child>
                     <object class="GtkBox">
                         <property name="orientation">horizontal</property>
