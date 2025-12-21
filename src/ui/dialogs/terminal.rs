@@ -98,6 +98,7 @@ pub fn show_terminal_dialog(parent: &Window, title: &str, command: &str, args: &
     info!("Terminal: Spawning {:?} in interactive window", argv_refs);
 
     let close_button_clone = close_button.clone();
+    let close_button_error = close_button.clone();
     terminal.spawn_async(
         vte4::PtyFlags::DEFAULT,
         None,
@@ -110,6 +111,8 @@ pub fn show_terminal_dialog(parent: &Window, title: &str, command: &str, args: &
         move |result| {
             if let Err(e) = result {
                 error!("Failed to spawn terminal command: {}", e);
+                // Enable close button on error so user can exit
+                close_button_error.set_sensitive(true);
             }
         },
     );

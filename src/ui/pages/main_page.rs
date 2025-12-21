@@ -43,8 +43,8 @@ fn setup_update_system(builder: &Builder) {
         terminal::show_terminal_dialog(
             window.upcast_ref(),
             "System Update",
-            "pkexec",
-            &["/usr/local/bin/upd"],
+            "/usr/local/bin/upd",
+            &[],
         );
     });
 }
