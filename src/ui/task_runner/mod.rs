@@ -57,7 +57,7 @@ mod widgets;
 
 use gtk4::glib;
 use gtk4::prelude::*;
-use gtk4::{Button, Label, Separator, Window};
+use gtk4::{Button, Label, Separator, ToggleButton, Window};
 use log::{error, warn};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -203,6 +203,16 @@ pub fn run(parent: &Window, commands: CommandSequence, title: &str) {
     let close_button: Button = builder
         .object("close_button")
         .expect("Failed to get close_button");
+    let sidebar_toggle: ToggleButton = builder
+        .object("sidebar_toggle_button")
+        .expect("Failed to get sidebar_toggle_button");
+    let split_view: adw::OverlaySplitView = builder
+        .object("split_view")
+        .expect("Failed to get split_view");
+    let output_text_view: gtk4::TextView = builder
+        .object("output_text_view")
+        .expect("Failed to get output_text_view");
+    let output_text_buffer = output_text_view.buffer();
 
     window.set_transient_for(Some(parent));
     window.set_title(Some(title));
@@ -223,15 +233,26 @@ pub fn run(parent: &Window, commands: CommandSequence, title: &str) {
         task_items.push(task_item);
     }
 
-    let widgets = Rc::new(TaskRunnerWidgets {
-        window: window.clone(),
+    // Initialize output buffer
+    output_text_buffer.set_text("Command outputs will appear here as tasks execute...\n\n");
+
+    let widgets = Rc::new(TaskRunnerWidgets::new(
+        window.clone(),
         title_label,
         task_list_container,
         scrolled_window,
-        cancel_button: cancel_button.clone(),
-        close_button: close_button.clone(),
+        cancel_button.clone(),
+        close_button.clone(),
         task_items,
-    });
+        sidebar_toggle,
+        split_view,
+        output_text_view,
+        output_text_buffer,
+    ));
+
+    // Setup sidebar toggle binding and initialize collapsed
+    widgets.setup_sidebar_toggle();
+    widgets.init_sidebar_collapsed();
 
     let cancelled = Rc::new(RefCell::new(false));
     let current_process = Rc::new(RefCell::new(None::<gtk4::gio::Subprocess>));

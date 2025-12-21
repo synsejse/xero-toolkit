@@ -90,28 +90,12 @@ impl RunningContext {
                 self.widgets
                     .update_task_status(self.index, TaskStatus::Failed);
 
-                let error_msg = result.error_message();
-                let final_message = if error_msg.is_empty() || error_msg == "No output captured" {
-                    format!(
-                        "Operation failed at step {} of {}",
-                        self.index + 1,
-                        self.commands.len()
-                    )
-                } else {
-                    // Truncate very long error messages for display
-                    let max_length = 500;
-                    let truncated = if error_msg.len() > max_length {
-                        format!("{}...", &error_msg[..max_length])
-                    } else {
-                        error_msg.clone()
-                    };
-                    format!(
-                        "Operation failed at step {} of {}:\n{}",
-                        self.index + 1,
-                        self.commands.len(),
-                        truncated
-                    )
-                };
+                // Only show error in title, not the full error message
+                let final_message = format!(
+                    "Operation failed at step {} of {}",
+                    self.index + 1,
+                    self.commands.len()
+                );
 
                 finalize_execution(&self.widgets, false, &final_message);
             }
@@ -200,6 +184,8 @@ pub fn execute_commands(
     // communicate_utf8_async waits for the process to complete, so we can check exit status after
     let wait_context = context.clone();
     let wait_subprocess_clone = subprocess.clone();
+    let widgets_clone = widgets.clone();
+    let cmd_description = cmd.description.clone();
     subprocess.communicate_utf8_async(None, None::<&gio::Cancellable>, move |result| {
         let (stdout, stderr) = match result {
             Ok((stdout_opt, stderr_opt)) => (
@@ -211,6 +197,27 @@ pub fn execute_commands(
                 (None, None)
             }
         };
+
+        // Format and display output in sidebar
+        let mut output_text = format!("=== {} ===\n", cmd_description);
+        if let Some(ref stdout_str) = stdout {
+            if !stdout_str.trim().is_empty() {
+                output_text.push_str("STDOUT:\n");
+                output_text.push_str(stdout_str);
+                output_text.push_str("\n\n");
+            }
+        }
+        if let Some(ref stderr_str) = stderr {
+            if !stderr_str.trim().is_empty() {
+                output_text.push_str("STDERR:\n");
+                output_text.push_str(stderr_str);
+                output_text.push_str("\n\n");
+            }
+        }
+        if output_text.trim() == format!("=== {} ===", cmd_description) {
+            output_text.push_str("(No output captured)\n\n");
+        }
+        widgets_clone.append_output(&output_text);
 
         // Check if process was successful using the cloned reference
         // communicate_utf8_async waits for completion, so exit status is available
