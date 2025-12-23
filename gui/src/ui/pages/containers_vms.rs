@@ -9,7 +9,7 @@
 
 use crate::core;
 use crate::ui::dialogs::selection::{
-    show_selection_dialog, SelectionDialogConfig, SelectionOption,
+    show_selection_dialog, SelectionDialogConfig, SelectionOption, SelectionType,
 };
 use crate::ui::task_runner::{self, Command, CommandSequence};
 use crate::ui::utils::extract_widget;
@@ -91,6 +91,8 @@ fn setup_podman(builder: &Builder, window: &ApplicationWindow) {
             "Podman Installation",
             "Podman will be installed. Optionally include the Podman Desktop GUI.",
         )
+        .selection_type(SelectionType::Single)
+        .selection_required(false)
         .add_option(SelectionOption::new(
             "podman_desktop",
             "Podman Desktop",

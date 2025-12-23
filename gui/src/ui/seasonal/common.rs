@@ -55,10 +55,7 @@ impl SimpleRng {
 }
 
 /// Helper function to add a drawing area as an overlay to the window.
-pub fn add_overlay_to_window(
-    window: &ApplicationWindow,
-    drawing_area: &DrawingArea,
-) -> bool {
+pub fn add_overlay_to_window(window: &ApplicationWindow, drawing_area: &DrawingArea) -> bool {
     use log::info;
 
     let adw_window = match window.downcast_ref::<adw::ApplicationWindow>() {
@@ -107,4 +104,3 @@ pub fn add_overlay_to_window(
         true
     }
 }
-

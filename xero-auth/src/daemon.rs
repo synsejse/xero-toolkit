@@ -181,7 +181,6 @@ fn spawn_signal_handler(shutdown: Arc<AtomicBool>) {
     });
 }
 
-
 async fn handle_client(
     mut stream: UnixStream,
     shutdown: Arc<AtomicBool>,
@@ -202,7 +201,11 @@ async fn handle_client(
                     pid
                 );
                 let mut w = writer_arc.lock().await;
-                write_message(&mut *w, &DaemonMessage::ErrorMessage("Parent process is no longer running".to_string())).await?;
+                write_message(
+                    &mut *w,
+                    &DaemonMessage::ErrorMessage("Parent process is no longer running".to_string()),
+                )
+                .await?;
                 shutdown.store(true, Ordering::SeqCst);
                 break;
             }

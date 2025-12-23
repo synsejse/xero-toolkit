@@ -184,6 +184,9 @@ fn setup_seasonal_effects_toggle(builder: &Builder, _window: &ApplicationWindow)
     toggle.connect_toggled(move |btn| {
         let enabled = btn.is_active();
         seasonal::set_effects_enabled(enabled);
-        info!("Seasonal effects {}", if enabled { "enabled" } else { "disabled" });
+        info!(
+            "Seasonal effects {}",
+            if enabled { "enabled" } else { "disabled" }
+        );
     });
 }

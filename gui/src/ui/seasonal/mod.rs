@@ -33,7 +33,9 @@ unsafe impl Sync for DrawingAreaVec {}
 static DRAWING_AREAS: std::sync::OnceLock<DrawingAreaVec> = std::sync::OnceLock::new();
 
 fn get_drawing_areas() -> &'static RefCell<Vec<Rc<DrawingArea>>> {
-    &DRAWING_AREAS.get_or_init(|| DrawingAreaVec(RefCell::new(Vec::new()))).0
+    &DRAWING_AREAS
+        .get_or_init(|| DrawingAreaVec(RefCell::new(Vec::new())))
+        .0
 }
 
 /// Check if seasonal effects are currently enabled.
@@ -44,7 +46,7 @@ pub fn are_effects_enabled() -> bool {
 /// Set whether seasonal effects are enabled and update visibility of drawing areas.
 pub fn set_effects_enabled(enabled: bool) {
     EFFECTS_ENABLED.store(enabled, Ordering::Relaxed);
-    
+
     let drawing_areas = get_drawing_areas();
     for area in drawing_areas.borrow().iter() {
         area.set_visible(enabled);
@@ -53,10 +55,8 @@ pub fn set_effects_enabled(enabled: bool) {
 
 /// Check if any seasonal effect is currently active.
 pub fn has_active_effect() -> bool {
-    let effects: Vec<Box<dyn SeasonalEffect>> = vec![
-        Box::new(SnowEffect),
-        Box::new(HalloweenEffect),
-    ];
+    let effects: Vec<Box<dyn SeasonalEffect>> =
+        vec![Box::new(SnowEffect), Box::new(HalloweenEffect)];
 
     effects.iter().any(|e| e.is_active())
 }
@@ -78,7 +78,11 @@ pub trait SeasonalEffect {
     /// Apply this effect to the given window.
     /// The mouse_context provides mouse position if the effect needs it.
     /// Returns the drawing area if the effect was successfully applied.
-    fn apply(&self, window: &ApplicationWindow, mouse_context: Option<&MouseContext>) -> Option<Rc<DrawingArea>>;
+    fn apply(
+        &self,
+        window: &ApplicationWindow,
+        mouse_context: Option<&MouseContext>,
+    ) -> Option<Rc<DrawingArea>>;
 }
 
 /// Apply any active seasonal effects to the window.
@@ -92,10 +96,8 @@ pub fn apply_seasonal_effects(window: &ApplicationWindow) {
 
     let mouse_context = common::setup_mouse_tracking(window);
 
-    let effects: Vec<Box<dyn SeasonalEffect>> = vec![
-        Box::new(SnowEffect),
-        Box::new(HalloweenEffect),
-    ];
+    let effects: Vec<Box<dyn SeasonalEffect>> =
+        vec![Box::new(SnowEffect), Box::new(HalloweenEffect)];
 
     for effect in effects {
         if effect.is_active() {
@@ -109,4 +111,3 @@ pub fn apply_seasonal_effects(window: &ApplicationWindow) {
         }
     }
 }
-

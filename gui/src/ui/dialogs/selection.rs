@@ -31,12 +31,23 @@ impl SelectionOption {
     }
 }
 
+/// Selection type for the dialog
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SelectionType {
+    /// Single selection (radio buttons)
+    Single,
+    /// Multiple selection (checkboxes)
+    Multi,
+}
+
 /// Configuration for the selection dialog
 pub struct SelectionDialogConfig {
     pub title: String,
     pub description: String,
     pub options: Vec<SelectionOption>,
     pub confirm_label: String,
+    pub selection_type: SelectionType,
+    pub selection_required: bool,
 }
 
 impl SelectionDialogConfig {
@@ -47,6 +58,8 @@ impl SelectionDialogConfig {
             description: description.to_string(),
             options: Vec::new(),
             confirm_label: "Install".to_string(),
+            selection_type: SelectionType::Multi,
+            selection_required: true,
         }
     }
 
@@ -59,6 +72,18 @@ impl SelectionDialogConfig {
     /// Set the confirm button label
     pub fn confirm_label(mut self, label: &str) -> Self {
         self.confirm_label = label.to_string();
+        self
+    }
+
+    /// Set the selection type (single or multi)
+    pub fn selection_type(mut self, selection_type: SelectionType) -> Self {
+        self.selection_type = selection_type;
+        self
+    }
+
+    /// Set whether selection is required to confirm
+    pub fn selection_required(mut self, required: bool) -> Self {
+        self.selection_required = required;
         self
     }
 }
@@ -92,6 +117,9 @@ where
     confirm_button.set_label(&config.confirm_label);
 
     let checkboxes: Rc<RefCell<Vec<(String, CheckButton)>>> = Rc::new(RefCell::new(Vec::new()));
+    let radio_buttons: Rc<RefCell<Vec<(String, CheckButton)>>> = Rc::new(RefCell::new(Vec::new()));
+    let selection_type = config.selection_type;
+    let selection_required = config.selection_required;
 
     let available_options: Vec<_> = config
         .options
@@ -108,35 +136,78 @@ where
         // Disable confirm button
         confirm_button.set_sensitive(false);
     } else {
+        let mut first_radio: Option<CheckButton> = None;
+
         for (i, option) in available_options.iter().enumerate() {
-            // Horizontal box: checkbox on left, text on right
+            // Horizontal box: checkbox/radio on left, text on right
             let option_row = GtkBox::new(gtk4::Orientation::Horizontal, 12);
             option_row.set_margin_start(12);
             option_row.set_margin_end(12);
             option_row.set_margin_top(8);
             option_row.set_margin_bottom(8);
 
-            let checkbox = CheckButton::new();
-            checkbox.set_active(false);
+            // Create checkbox or radio button based on selection type
+            match selection_type {
+                SelectionType::Multi => {
+                    let checkbox = CheckButton::new();
+                    checkbox.set_active(false);
+                    checkboxes
+                        .borrow_mut()
+                        .push((option.id.clone(), checkbox.clone()));
 
-            // Vertical box for title and description
-            let text_box = GtkBox::new(gtk4::Orientation::Vertical, 4);
-            text_box.set_hexpand(true);
+                    // Vertical box for title and description
+                    let text_box = GtkBox::new(gtk4::Orientation::Vertical, 4);
+                    text_box.set_hexpand(true);
 
-            let title_label = Label::new(Some(&option.label));
-            title_label.set_halign(gtk4::Align::Start);
-            title_label.set_wrap(true);
+                    let title_label = Label::new(Some(&option.label));
+                    title_label.set_halign(gtk4::Align::Start);
+                    title_label.set_wrap(true);
 
-            let desc_label = Label::new(Some(&option.description));
-            desc_label.set_css_classes(&["dim", "caption"]);
-            desc_label.set_halign(gtk4::Align::Start);
-            desc_label.set_wrap(true);
+                    let desc_label = Label::new(Some(&option.description));
+                    desc_label.set_css_classes(&["dim", "caption"]);
+                    desc_label.set_halign(gtk4::Align::Start);
+                    desc_label.set_wrap(true);
 
-            text_box.append(&title_label);
-            text_box.append(&desc_label);
+                    text_box.append(&title_label);
+                    text_box.append(&desc_label);
 
-            option_row.append(&checkbox);
-            option_row.append(&text_box);
+                    option_row.append(&checkbox);
+                    option_row.append(&text_box);
+                }
+                SelectionType::Single => {
+                    let radio = if let Some(ref first) = first_radio {
+                        let radio = CheckButton::new();
+                        radio.set_group(Some(first));
+                        radio
+                    } else {
+                        let radio = CheckButton::new();
+                        first_radio = Some(radio.clone());
+                        radio
+                    };
+                    radio_buttons
+                        .borrow_mut()
+                        .push((option.id.clone(), radio.clone()));
+
+                    // Vertical box for title and description
+                    let text_box = GtkBox::new(gtk4::Orientation::Vertical, 4);
+                    text_box.set_hexpand(true);
+
+                    let title_label = Label::new(Some(&option.label));
+                    title_label.set_halign(gtk4::Align::Start);
+                    title_label.set_wrap(true);
+
+                    let desc_label = Label::new(Some(&option.description));
+                    desc_label.set_css_classes(&["dim", "caption"]);
+                    desc_label.set_halign(gtk4::Align::Start);
+                    desc_label.set_wrap(true);
+
+                    text_box.append(&title_label);
+                    text_box.append(&desc_label);
+
+                    option_row.append(&radio);
+                    option_row.append(&text_box);
+                }
+            }
 
             options_container.append(&option_row);
 
@@ -145,8 +216,11 @@ where
                 let sep = Separator::new(gtk4::Orientation::Horizontal);
                 options_container.append(&sep);
             }
+        }
 
-            checkboxes.borrow_mut().push((option.id.clone(), checkbox));
+        // Set initial state of confirm button based on selection_required
+        if selection_required {
+            confirm_button.set_sensitive(false);
         }
     }
 
@@ -157,23 +231,76 @@ where
         dialog_clone.close();
     });
 
+    // Update confirm button sensitivity based on selection
+    let update_confirm_button = {
+        let confirm_button_clone = confirm_button.clone();
+        let checkboxes_clone = checkboxes.clone();
+        let radio_buttons_clone = radio_buttons.clone();
+        let selection_type = selection_type;
+        let selection_required = selection_required;
+
+        move || {
+            let has_selection = match selection_type {
+                SelectionType::Multi => checkboxes_clone
+                    .borrow()
+                    .iter()
+                    .any(|(_, checkbox)| checkbox.is_active()),
+                SelectionType::Single => radio_buttons_clone
+                    .borrow()
+                    .iter()
+                    .any(|(_, radio)| radio.is_active()),
+            };
+
+            if selection_required {
+                confirm_button_clone.set_sensitive(has_selection);
+            } else {
+                confirm_button_clone.set_sensitive(true);
+            }
+        }
+    };
+
+    // Connect selection change handlers
+    for (_, checkbox) in checkboxes.borrow().iter() {
+        let update = update_confirm_button.clone();
+        checkbox.connect_toggled(move |_| {
+            update();
+        });
+    }
+
+    for (_, radio) in radio_buttons.borrow().iter() {
+        let update = update_confirm_button.clone();
+        radio.connect_toggled(move |_| {
+            update();
+        });
+    }
+
     // Confirm button - collect selected options and call callback
     let dialog_clone = dialog.clone();
     let checkboxes_clone = checkboxes.clone();
+    let radio_buttons_clone = radio_buttons.clone();
+    let selection_type = selection_type;
     confirm_button.connect_clicked(move |_| {
-        let selected: Vec<String> = checkboxes_clone
-            .borrow()
-            .iter()
-            .filter(|(_, checkbox)| checkbox.is_active())
-            .map(|(id, _)| id.clone())
-            .collect();
+        let selected: Vec<String> = match selection_type {
+            SelectionType::Multi => checkboxes_clone
+                .borrow()
+                .iter()
+                .filter(|(_, checkbox)| checkbox.is_active())
+                .map(|(id, _)| id.clone())
+                .collect(),
+            SelectionType::Single => radio_buttons_clone
+                .borrow()
+                .iter()
+                .filter(|(_, radio)| radio.is_active())
+                .map(|(id, _)| id.clone())
+                .collect(),
+        };
 
         info!(
             "Selection dialog confirmed with {} selections",
             selected.len()
         );
 
-            on_confirm(selected);
+        on_confirm(selected);
 
         dialog_clone.close();
     });

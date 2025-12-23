@@ -8,7 +8,7 @@
 
 use crate::core;
 use crate::ui::dialogs::selection::{
-    show_selection_dialog, SelectionDialogConfig, SelectionOption,
+    show_selection_dialog, SelectionDialogConfig, SelectionOption, SelectionType,
 };
 use crate::ui::task_runner::{self, Command, CommandSequence};
 use crate::ui::utils::extract_widget;
@@ -96,6 +96,8 @@ fn setup_openrazer(builder: &Builder, window: &ApplicationWindow) {
             "OpenRazer Drivers & Frontend",
             "OpenRazer drivers will be installed. Optionally select a frontend application for managing your Razer devices.",
         )
+        .selection_type(SelectionType::Single)
+        .selection_required(false)
         .add_option(SelectionOption::new(
             "polychromatic",
             "Polychromatic",
@@ -186,6 +188,10 @@ fn setup_fingerprint(builder: &Builder, window: &ApplicationWindow) {
             )
             .build();
 
-        task_runner::run(window.upcast_ref(), commands, "Install Fingerprint GUI Tool");
+        task_runner::run(
+            window.upcast_ref(),
+            commands,
+            "Install Fingerprint GUI Tool",
+        );
     });
 }

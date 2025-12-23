@@ -7,7 +7,7 @@
 
 use crate::core;
 use crate::ui::dialogs::selection::{
-    show_selection_dialog, SelectionDialogConfig, SelectionOption,
+    show_selection_dialog, SelectionDialogConfig, SelectionOption, SelectionType,
 };
 use crate::ui::task_runner::{self, Command, CommandSequence};
 use crate::ui::utils::extract_widget;
@@ -58,6 +58,8 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                     "OBS-Studio & Plugins Installation",
                     "OBS-Studio will be installed. Optionally select plugins to install.",
                 )
+                .selection_type(SelectionType::Multi)
+                .selection_required(false)
                 .add_option(SelectionOption::new(
                     "wayland_hotkeys",
                     "Wayland Hotkeys Plugin",

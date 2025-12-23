@@ -117,7 +117,7 @@ impl TaskRunnerWidgets {
                     "Show command output"
                 };
                 toggle.set_tooltip_text(Some(tooltip));
-                
+
                 // Only allow targeting when revealed so it doesn't block header bar when hidden
                 revealer_clone.set_can_target(is_revealed);
             });
@@ -296,7 +296,6 @@ impl TaskRunnerWidgets {
         }
         self.scroll_to_bottom();
     }
-
 
     /// Append a command header.
     pub fn append_command_header(&self, description: &str) {

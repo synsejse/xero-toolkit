@@ -15,8 +15,7 @@ where
     W: AsyncWriteExt + Unpin,
     for<'a> M: rkyv::Serialize<high::HighSerializer<AlignedVec, ArenaHandle<'a>, Error>>,
 {
-    let bytes = high::to_bytes(message)
-        .context("Failed to serialize message")?;
+    let bytes = high::to_bytes(message).context("Failed to serialize message")?;
     let len = bytes.len() as u64;
     let len_bytes = len.to_le_bytes();
     writer.write_all(&len_bytes).await?;
@@ -54,4 +53,3 @@ where
         .context("Failed to deserialize message")?;
     Ok(Some(message))
 }
-

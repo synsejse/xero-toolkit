@@ -31,7 +31,11 @@ impl SeasonalEffect for SnowEffect {
         "Snow (Christmas)"
     }
 
-    fn apply(&self, window: &ApplicationWindow, _mouse_context: Option<&crate::ui::seasonal::common::MouseContext>) -> Option<Rc<DrawingArea>> {
+    fn apply(
+        &self,
+        window: &ApplicationWindow,
+        _mouse_context: Option<&crate::ui::seasonal::common::MouseContext>,
+    ) -> Option<Rc<DrawingArea>> {
         let drawing_area = Rc::new(DrawingArea::new());
         drawing_area.set_hexpand(true);
         drawing_area.set_vexpand(true);
@@ -92,7 +96,7 @@ struct Snowflake {
 
 impl Snowflake {
     fn new(width: f64, height: f64, rng: &mut SimpleRng) -> Self {
-        let z = rng.f64() * 1.0 + 0.5; 
+        let z = rng.f64() * 1.0 + 0.5;
         Self {
             x: rng.f64() * width,
             y: rng.f64() * height,
@@ -113,8 +117,12 @@ impl Snowflake {
         if self.y > height + 10.0 {
             self.y = -10.0;
         }
-        if self.x < -20.0 { self.x = width + 20.0; }
-        if self.x > width + 20.0 { self.x = -20.0; }
+        if self.x < -20.0 {
+            self.x = width + 20.0;
+        }
+        if self.x > width + 20.0 {
+            self.x = -20.0;
+        }
     }
 
     fn draw(&self, cr: &cairo::Context) {
@@ -122,7 +130,7 @@ impl Snowflake {
 
         let radial = cairo::RadialGradient::new(self.x, self.y, 0.0, self.x, self.y, self.size);
         let opacity = (0.3 + (self.z - 0.5) * 0.5).min(0.8);
-        
+
         radial.add_color_stop_rgba(0.0, 1.0, 1.0, 1.0, opacity);
         radial.add_color_stop_rgba(1.0, 1.0, 1.0, 1.0, 0.0);
 
@@ -144,7 +152,11 @@ struct SnowState {
 
 impl SnowState {
     fn new(width: f64, height: f64) -> Self {
-        let mut rng = SimpleRng::new(glib::DateTime::now_utc().map(|dt| dt.to_unix()).unwrap_or(0) as u64);
+        let mut rng = SimpleRng::new(
+            glib::DateTime::now_utc()
+                .map(|dt| dt.to_unix())
+                .unwrap_or(0) as u64,
+        );
         let snowflakes = (0..SNOW_COUNT)
             .map(|_| Snowflake::new(width, height, &mut rng))
             .collect();

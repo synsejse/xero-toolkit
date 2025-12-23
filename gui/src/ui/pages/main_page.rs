@@ -10,7 +10,7 @@ use crate::config;
 use crate::core;
 use crate::ui::dialogs::download::show_download_dialog;
 use crate::ui::dialogs::selection::{
-    show_selection_dialog, SelectionDialogConfig, SelectionOption,
+    show_selection_dialog, SelectionDialogConfig, SelectionOption, SelectionType,
 };
 use crate::ui::dialogs::terminal;
 use crate::ui::dialogs::warning::show_warning_confirmation;
@@ -61,6 +61,8 @@ fn setup_pkg_manager(builder: &Builder, window: &ApplicationWindow) {
             "Package Manager GUI Applications",
             "Select which package manager GUIs to install. Multiple selections allowed.",
         )
+        .selection_type(SelectionType::Multi)
+        .selection_required(true)
         .add_option(SelectionOption::new(
             "octopi",
             "Octopi",
@@ -218,6 +220,8 @@ fn setup_install_nix(builder: &Builder, window: &ApplicationWindow) {
                     "Nix Installation Type",
                     "Choose the installation type for Nix Package Manager. Multi-user is recommended for most users.",
                 )
+                .selection_type(SelectionType::Single)
+                .selection_required(true)
                 .add_option(SelectionOption::new(
                     "multi-user",
                     "Multi-user Installation (Recommended)",

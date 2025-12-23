@@ -10,12 +10,12 @@ use super::command::{Command, CommandResult, CommandType, TaskStatus};
 use super::widgets::TaskRunnerWidgets;
 use crate::core;
 use crate::core::daemon::get_xero_auth_path;
-use xero_auth::utils::read_buffer_with_line_processing;
 use gtk4::gio;
 use gtk4::glib;
 use log::{error, info, warn};
 use std::cell::RefCell;
 use std::rc::Rc;
+use xero_auth::utils::read_buffer_with_line_processing;
 
 /// Context for a running command execution.
 pub struct RunningContext {
@@ -208,13 +208,11 @@ pub fn execute_commands(
             thread::spawn(move || {
                 read_buffer_with_line_processing(
                     stdout,
-                    |text| {
-                        match stdout_tx.send(text) {
-                            Ok(()) => true,
-                            Err(e) => {
-                                warn!("Failed to send stdout chunk to channel: {}", e);
-                                false
-                            }
+                    |text| match stdout_tx.send(text) {
+                        Ok(()) => true,
+                        Err(e) => {
+                            warn!("Failed to send stdout chunk to channel: {}", e);
+                            false
                         }
                     },
                     |e| {
@@ -234,13 +232,11 @@ pub fn execute_commands(
             thread::spawn(move || {
                 read_buffer_with_line_processing(
                     stderr,
-                    |text| {
-                        match stderr_tx.send(text) {
-                            Ok(()) => true,
-                            Err(e) => {
-                                warn!("Failed to send stderr chunk to channel: {}", e);
-                                false
-                            }
+                    |text| match stderr_tx.send(text) {
+                        Ok(()) => true,
+                        Err(e) => {
+                            warn!("Failed to send stderr chunk to channel: {}", e);
+                            false
                         }
                     },
                     |e| {

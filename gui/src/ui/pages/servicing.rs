@@ -14,7 +14,7 @@
 use crate::core;
 use crate::ui::dialogs::error::show_error;
 use crate::ui::dialogs::selection::{
-    show_selection_dialog, SelectionDialogConfig, SelectionOption,
+    show_selection_dialog, SelectionDialogConfig, SelectionOption, SelectionType,
 };
 use crate::ui::dialogs::terminal;
 use crate::ui::task_runner::{self, Command, CommandSequence};
@@ -225,6 +225,8 @@ fn setup_update_mirrorlist(page_builder: &Builder, window: &ApplicationWindow) {
                     "Update Mirrorlist",
                     "Select which mirrorlists to update. rate-mirrors will be installed if needed.",
                 )
+                .selection_type(SelectionType::Single)
+                .selection_required(false)
                 .add_option(SelectionOption::new(
                     "chaotic",
                     "Chaotic-AUR Mirrorlist",

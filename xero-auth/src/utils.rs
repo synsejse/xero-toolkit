@@ -1,6 +1,6 @@
 //! Utility functions for buffer reading and processing.
 
-use std::io::{Read, ErrorKind};
+use std::io::{ErrorKind, Read};
 
 pub fn read_buffer_with_line_processing<R, F, E>(
     mut reader: R,
@@ -21,7 +21,9 @@ where
             Ok(0) => {
                 if !accumulator.is_empty() {
                     let text = String::from_utf8_lossy(&accumulator).into_owned();
-                    if !send_fn(text) { return false; }
+                    if !send_fn(text) {
+                        return false;
+                    }
                 }
                 break;
             }
@@ -30,7 +32,9 @@ where
                     match byte {
                         b'\r' => {
                             // Send on CR, set state to skip potential following LF
-                            if !process_chunk(&mut accumulator, &mut send_fn) { return false; }
+                            if !process_chunk(&mut accumulator, &mut send_fn) {
+                                return false;
+                            }
                             last_was_cr = true;
                         }
                         b'\n' => {
@@ -39,7 +43,9 @@ where
                                 last_was_cr = false;
                             } else {
                                 // Standalone \n, process it
-                                if !process_chunk(&mut accumulator, &mut send_fn) { return false; }
+                                if !process_chunk(&mut accumulator, &mut send_fn) {
+                                    return false;
+                                }
                             }
                         }
                         _ => {
@@ -60,8 +66,9 @@ where
 }
 
 /// Helper to convert accumulated bytes to String and send.
-fn process_chunk<F>(acc: &mut Vec<u8>, send_fn: &mut F) -> bool 
-where F: FnMut(String) -> bool 
+fn process_chunk<F>(acc: &mut Vec<u8>, send_fn: &mut F) -> bool
+where
+    F: FnMut(String) -> bool,
 {
     // Ensure the output string has a newline since we stripped the delimiter
     acc.push(b'\n');
