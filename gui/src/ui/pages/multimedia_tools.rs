@@ -2,6 +2,7 @@
 //!
 //! Handles:
 //! - OBS-Studio with plugins and V4L2
+//! - Kdenlive video editor
 //! - Jellyfin server installation
 
 use crate::core;
@@ -17,6 +18,7 @@ use log::info;
 /// Set up all button handlers for the multimedia tools page
 pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder, window: &ApplicationWindow) {
     setup_obs_studio_aio(page_builder, window);
+    setup_kdenlive(page_builder, window);
     setup_jellyfin(page_builder, window);
 }
 
@@ -205,6 +207,25 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                         task_runner::run(window_for_closure.upcast_ref(), commands.build(), "OBS-Studio Setup");
                     }
                 });
+    });
+}
+
+fn setup_kdenlive(page_builder: &Builder, window: &ApplicationWindow) {
+    let btn_kdenlive = extract_widget::<gtk4::Button>(page_builder, "btn_kdenlive");
+    let window = window.clone();
+    btn_kdenlive.connect_clicked(move |_| {
+        info!("Multimedia tools: Kdenlive button clicked");
+        let commands = CommandSequence::new()
+            .then(
+                Command::builder()
+                    .aur()
+                    .args(&["-S", "--noconfirm", "--needed", "kdenlive"])
+                    .description("Installing Kdenlive...")
+                    .build(),
+            )
+            .build();
+
+        task_runner::run(window.upcast_ref(), commands, "Kdenlive Installation");
     });
 }
 

@@ -61,7 +61,7 @@
                 <property name="vexpand">true</property>
                 <property name="margin-top">32</property>
 
-                <!-- Row 1: OBS-Studio and Jellyfin -->
+                <!-- Row 1: OBS-Studio -->
                 <child>
                     <object class="GtkBox">
                         <property name="orientation">horizontal</property>
@@ -71,6 +71,26 @@
                         <child>
                             <object class="GtkButton" id="btn_obs_studio_aio">
                                 <property name="label">OBS-Studio AiO</property>
+                                <property name="width-request">200</property>
+                                <property name="height-request">50</property>
+                                <property
+                                    name="css-classes"
+                                >suggested-action pill</property>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+
+                <!-- Row 2: Kdenlive and Jellyfin -->
+                <child>
+                    <object class="GtkBox">
+                        <property name="orientation">horizontal</property>
+                        <property name="spacing">16</property>
+                        <property name="halign">center</property>
+
+                        <child>
+                            <object class="GtkButton" id="btn_kdenlive">
+                                <property name="label">Kdenlive</property>
                                 <property name="width-request">200</property>
                                 <property name="height-request">50</property>
                                 <property
