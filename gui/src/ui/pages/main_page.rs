@@ -51,7 +51,6 @@ fn setup_update_system(builder: &Builder, window: &ApplicationWindow) {
 fn setup_pkg_manager(builder: &Builder, window: &ApplicationWindow) {
     let button = extract_widget::<Button>(builder, "btn_pkg_manager");
     let window = window.clone();
-    let window_clone = window.clone();
 
     button.connect_clicked(move |_| {
         info!("PKG Manager GUI button clicked");
@@ -101,7 +100,7 @@ fn setup_pkg_manager(builder: &Builder, window: &ApplicationWindow) {
         ))
         .confirm_label("Install");
 
-        let window_for_closure = window_clone.clone();
+        let window_for_closure = window.clone();
         show_selection_dialog(window.upcast_ref(), config, move |selected| {
             let commands = build_pkg_manager_commands(&selected);
 
@@ -120,7 +119,7 @@ fn setup_pkg_manager(builder: &Builder, window: &ApplicationWindow) {
 fn build_pkg_manager_commands(selected: &[String]) -> CommandSequence {
     let mut commands = CommandSequence::new();
 
-    if selected.contains(&"octopi".to_string()) {
+    if selected.iter().any(|s| s == "octopi") {
         commands = commands.then(
             Command::builder()
                 .aur()
@@ -130,7 +129,7 @@ fn build_pkg_manager_commands(selected: &[String]) -> CommandSequence {
         );
     }
 
-    if selected.contains(&"pacseek".to_string()) {
+    if selected.iter().any(|s| s == "pacseek") {
         commands = commands.then(
             Command::builder()
                 .aur()
@@ -140,7 +139,7 @@ fn build_pkg_manager_commands(selected: &[String]) -> CommandSequence {
         );
     }
 
-    if selected.contains(&"bauh".to_string()) {
+    if selected.iter().any(|s| s == "bauh") {
         commands = commands.then(
             Command::builder()
                 .aur()
@@ -150,7 +149,7 @@ fn build_pkg_manager_commands(selected: &[String]) -> CommandSequence {
         );
     }
 
-    if selected.contains(&"warehouse".to_string()) {
+    if selected.iter().any(|s| s == "warehouse") {
         commands = commands.then(
             Command::builder()
                 .normal()
@@ -161,7 +160,7 @@ fn build_pkg_manager_commands(selected: &[String]) -> CommandSequence {
         );
     }
 
-    if selected.contains(&"flatseal".to_string()) {
+    if selected.iter().any(|s| s == "flatseal") {
         commands = commands.then(
             Command::builder()
                 .normal()
@@ -172,7 +171,7 @@ fn build_pkg_manager_commands(selected: &[String]) -> CommandSequence {
         );
     }
 
-    if selected.contains(&"bazaar".to_string()) {
+    if selected.iter().any(|s| s == "bazaar") {
         commands = commands.then(
             Command::builder()
                 .normal()

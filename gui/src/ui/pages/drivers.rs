@@ -96,7 +96,7 @@ fn setup_openrazer(builder: &Builder, window: &ApplicationWindow) {
             "OpenRazer Drivers & Frontend",
             "OpenRazer drivers will be installed. Optionally select a frontend application for managing your Razer devices.",
         )
-        .selection_type(SelectionType::Single)
+        .selection_type(SelectionType::Multi)
         .selection_required(false)
         .add_option(SelectionOption::new(
             "polychromatic",
@@ -148,7 +148,7 @@ fn build_openrazer_commands(selected_frontends: &[String]) -> CommandSequence {
     );
 
     // Optionally install selected frontends
-    if selected_frontends.contains(&"polychromatic".to_string()) {
+    if selected_frontends.iter().any(|s| s == "polychromatic") {
         commands = commands.then(
             Command::builder()
                 .aur()
@@ -158,7 +158,7 @@ fn build_openrazer_commands(selected_frontends: &[String]) -> CommandSequence {
         );
     }
 
-    if selected_frontends.contains(&"razergenie".to_string()) {
+    if selected_frontends.iter().any(|s| s == "razergenie") {
         commands = commands.then(
             Command::builder()
                 .aur()

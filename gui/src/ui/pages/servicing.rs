@@ -215,7 +215,6 @@ fn setup_update_mirrorlist(page_builder: &Builder, window: &ApplicationWindow) {
     let btn_update_mirrorlist =
         extract_widget::<gtk4::Button>(page_builder, "btn_update_mirrorlist");
     let window = window.clone();
-    let window_clone = window.clone();
     btn_update_mirrorlist.connect_clicked(move |_| {
         info!("Servicing: Update Mirrorlist button clicked");
         let window_ref = window.upcast_ref();
@@ -235,7 +234,7 @@ fn setup_update_mirrorlist(page_builder: &Builder, window: &ApplicationWindow) {
                 ))
                 .confirm_label("Update");
 
-                let window_for_closure = window_clone.clone();
+                let window_for_closure = window.clone();
                 show_selection_dialog(window_ref, config, move |selected_ids| {
                     let mut commands = CommandSequence::new();
 
@@ -254,7 +253,7 @@ fn setup_update_mirrorlist(page_builder: &Builder, window: &ApplicationWindow) {
                         .description("Updating Arch mirrorlist...")
                         .build());
 
-                    if selected_ids.contains(&"chaotic".to_string()) {
+                    if selected_ids.iter().any(|s| s == "chaotic") {
                         commands = commands.then(Command::builder()
                             .privileged()
                             .program("sh")

@@ -83,7 +83,6 @@ fn setup_docker(builder: &Builder, window: &ApplicationWindow) {
 fn setup_podman(builder: &Builder, window: &ApplicationWindow) {
     let button = extract_widget::<Button>(builder, "btn_podman");
     let window = window.clone();
-    let window_clone = window.clone();
     button.connect_clicked(move |_| {
         info!("Podman button clicked");
 
@@ -101,7 +100,7 @@ fn setup_podman(builder: &Builder, window: &ApplicationWindow) {
         ))
         .confirm_label("Install");
 
-        let window_for_closure = window_clone.clone();
+        let window_for_closure = window.clone();
         show_selection_dialog(window.upcast_ref(), config, move |selected| {
             let mut commands = CommandSequence::new()
                 .then(
@@ -120,7 +119,7 @@ fn setup_podman(builder: &Builder, window: &ApplicationWindow) {
                         .build(),
                 );
 
-            if selected.contains(&"podman_desktop".to_string()) {
+            if selected.iter().any(|s| s == "podman_desktop") {
                 commands = commands.then(
                     Command::builder()
                         .normal()

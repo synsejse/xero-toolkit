@@ -25,7 +25,6 @@ pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder, window: &
 fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
     let btn_obs_studio_aio = extract_widget::<gtk4::Button>(page_builder, "btn_obs_studio_aio");
     let window = window.clone();
-    let window_clone = window.clone();
     btn_obs_studio_aio.connect_clicked(move |_| {
         info!("Multimedia tools: OBS-Studio AiO button clicked");
         let window_ref = window.upcast_ref();
@@ -98,7 +97,7 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                 ))
                 .confirm_label("Install");
 
-                let window_for_closure = window_clone.clone();
+                let window_for_closure = window.clone();
                 show_selection_dialog(window_ref, config, move |selected_ids| {
                     let mut commands = CommandSequence::new();
 
@@ -110,7 +109,7 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                         .description("Installing OBS-Studio...")
                         .build());
 
-                    if selected_ids.contains(&"wayland_hotkeys".to_string()) {
+                    if selected_ids.iter().any(|s| s == "wayland_hotkeys") {
                         commands = commands.then(Command::builder()
                             .normal()
                             .program("flatpak")
@@ -118,7 +117,7 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                             .description("Installing Wayland Hotkeys plugin...")
                             .build());
                     }
-                    if selected_ids.contains(&"graphics_capture".to_string()) {
+                    if selected_ids.iter().any(|s| s == "graphics_capture") {
                         commands = commands.then(Command::builder()
                             .normal()
                             .program("flatpak")
@@ -133,7 +132,7 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                             .description("Installing graphics capture plugins...")
                             .build());
                     }
-                    if selected_ids.contains(&"transitions_effects".to_string()) {
+                    if selected_ids.iter().any(|s| s == "transitions_effects") {
                         commands = commands.then(Command::builder()
                             .normal()
                             .program("flatpak")
@@ -147,7 +146,7 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                             .description("Installing transitions & effects plugins...")
                             .build());
                     }
-                    if selected_ids.contains(&"streaming_tools".to_string()) {
+                    if selected_ids.iter().any(|s| s == "streaming_tools") {
                         commands = commands.then(Command::builder()
                             .normal()
                             .program("flatpak")
@@ -161,7 +160,7 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                             .description("Installing streaming tools...")
                             .build());
                     }
-                    if selected_ids.contains(&"audio_video_tools".to_string()) {
+                    if selected_ids.iter().any(|s| s == "audio_video_tools") {
                         commands = commands.then(Command::builder()
                             .normal()
                             .program("flatpak")
@@ -175,7 +174,7 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                             .description("Installing audio/video enhancement plugins...")
                             .build());
                     }
-                    if selected_ids.contains(&"v4l2".to_string()) {
+                    if selected_ids.iter().any(|s| s == "v4l2") {
                         commands = commands.then(Command::builder()
                             .aur()
                             .args(&["-S", "--noconfirm", "--needed", "v4l2loopback-dkms", "v4l2loopback-utils"])
