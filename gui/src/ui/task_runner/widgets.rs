@@ -105,16 +105,21 @@ impl TaskRunnerWidgets {
             .bidirectional()
             .build();
 
-        // Update tooltip based on state
+        // Update tooltip and can-target based on state
         let toggle = self.sidebar_toggle.clone();
+        let revealer_clone = self.sidebar_revealer.clone();
         self.sidebar_revealer
             .connect_reveal_child_notify(move |revealer| {
-                let tooltip = if revealer.reveals_child() {
+                let is_revealed = revealer.reveals_child();
+                let tooltip = if is_revealed {
                     "Hide command output"
                 } else {
                     "Show command output"
                 };
                 toggle.set_tooltip_text(Some(tooltip));
+                
+                // Only allow targeting when revealed so it doesn't block header bar when hidden
+                revealer_clone.set_can_target(is_revealed);
             });
     }
 }
