@@ -8,6 +8,7 @@
 //! - KVM/QEMU virtualization setup
 
 use crate::core;
+use crate::ui::app::extract_widget;
 use crate::ui::dialogs::selection::{
     show_selection_dialog, SelectionDialogConfig, SelectionOption,
 };
@@ -26,9 +27,7 @@ pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder) {
 }
 
 fn setup_docker(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_docker") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_docker");
 
     button.connect_clicked(move |btn| {
         info!("Docker button clicked");
@@ -85,9 +84,7 @@ fn setup_docker(builder: &Builder) {
 }
 
 fn setup_podman(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_podman") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_podman");
 
     button.connect_clicked(move |btn| {
         info!("Podman button clicked");
@@ -152,9 +149,7 @@ fn setup_podman(builder: &Builder) {
 }
 
 fn setup_vbox(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_vbox") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_vbox");
 
     button.connect_clicked(move |btn| {
         info!("VirtualBox button clicked");
@@ -178,9 +173,7 @@ fn setup_vbox(builder: &Builder) {
 }
 
 fn setup_distrobox(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_distrobox") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_distrobox");
 
     button.connect_clicked(move |btn| {
         info!("DistroBox button clicked");
@@ -212,9 +205,7 @@ fn setup_distrobox(builder: &Builder) {
 }
 
 fn setup_kvm(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_kvm") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_kvm");
 
     button.connect_clicked(move |btn| {
         info!("KVM button clicked");

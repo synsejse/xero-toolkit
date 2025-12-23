@@ -197,12 +197,9 @@ fn create_dynamic_stack(main_builder: &Builder) -> Stack {
     }
 
     // Add the dynamic stack to the right container
-    if let Some(right_container) = main_builder.object::<GtkBox>("right_container") {
-        right_container.append(&stack);
-        info!("Dynamic stack added to right container");
-    } else {
-        warn!("Could not find right_container to add stack");
-    }
+    let right_container = crate::ui::app::extract_widget::<GtkBox>(main_builder, "right_container");
+    right_container.append(&stack);
+    info!("Dynamic stack added to right container");
 
     stack
 }

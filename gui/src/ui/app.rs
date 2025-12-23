@@ -81,9 +81,7 @@ fn setup_resources_and_theme() {
 
 /// Create main application window.
 fn create_main_window(app: &Application, builder: &Builder) -> ApplicationWindow {
-    let window: ApplicationWindow = builder
-        .object("app_window")
-        .expect("Failed to get app_window");
+    let window: ApplicationWindow = extract_widget(builder, "app_window");
 
     window.set_application(Some(app));
     info!("Setting window icon to xero-toolkit");
@@ -124,42 +122,40 @@ fn setup_ui_components(builder: &Builder, stack: Stack, window: &ApplicationWind
 
 /// Set up the autostart toggle switch in the sidebar.
 fn setup_autostart_toggle(builder: &Builder) {
-    if let Some(switch) = builder.object::<gtk4::Switch>("switch_autostart") {
-        // Set initial state based on whether autostart is enabled
-        switch.set_active(core::autostart::is_enabled());
+    let switch = extract_widget::<gtk4::Switch>(builder, "switch_autostart");
+    // Set initial state based on whether autostart is enabled
+    switch.set_active(core::autostart::is_enabled());
 
-        switch.connect_state_set(move |_switch, state| {
-            info!("Autostart toggle changed to: {}", state);
+    switch.connect_state_set(move |_switch, state| {
+        info!("Autostart toggle changed to: {}", state);
 
-            let result = if state {
-                core::autostart::enable()
-            } else {
-                core::autostart::disable()
-            };
+        let result = if state {
+            core::autostart::enable()
+        } else {
+            core::autostart::disable()
+        };
 
-            if let Err(e) = result {
-                warn!(
-                    "Failed to {} autostart: {}",
-                    if state { "enable" } else { "disable" },
-                    e
-                );
-            }
+        if let Err(e) = result {
+            warn!(
+                "Failed to {} autostart: {}",
+                if state { "enable" } else { "disable" },
+                e
+            );
+        }
 
-            // Return Propagation::Proceed to allow the switch to update its state
-            glib::Propagation::Proceed
-        });
-    }
+        // Return Propagation::Proceed to allow the switch to update its state
+        glib::Propagation::Proceed
+    });
 }
 
 /// Set up the about button in the header bar.
 fn setup_about_button(builder: &Builder, window: &ApplicationWindow) {
     use crate::ui::dialogs::about;
 
-    if let Some(button) = builder.object::<gtk4::Button>("about_button") {
-        let window_clone = window.clone();
-        button.connect_clicked(move |_| {
-            info!("About button clicked");
-            about::show_about_dialog(window_clone.upcast_ref());
-        });
-    }
+    let button = extract_widget::<gtk4::Button>(builder, "about_button");
+    let window_clone = window.clone();
+    button.connect_clicked(move |_| {
+        info!("About button clicked");
+        about::show_about_dialog(window_clone.upcast_ref());
+    });
 }

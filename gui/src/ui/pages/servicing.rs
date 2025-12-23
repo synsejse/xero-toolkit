@@ -12,6 +12,7 @@
 //! - Parallel downloads adjustment
 
 use crate::core;
+use crate::ui::app::extract_widget;
 use crate::ui::dialogs::error::show_error;
 use crate::ui::dialogs::selection::{
     show_selection_dialog, SelectionDialogConfig, SelectionOption,
@@ -36,8 +37,8 @@ pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder) {
 }
 
 fn setup_clr_pacman(page_builder: &Builder) {
-    if let Some(btn_clr_pacman) = page_builder.object::<gtk4::Button>("btn_clr_pacman") {
-        btn_clr_pacman.connect_clicked(move |button| {
+    let btn_clr_pacman = extract_widget::<gtk4::Button>(page_builder, "btn_clr_pacman");
+    btn_clr_pacman.connect_clicked(move |button| {
             info!("Servicing: Clear Pacman Cache button clicked");
             let widget = button.clone().upcast::<gtk4::Widget>();
             if let Some(window) = widget
@@ -53,12 +54,11 @@ fn setup_clr_pacman(page_builder: &Builder) {
                 );
             }
         });
-    }
 }
 
 fn setup_unlock_pacman(page_builder: &Builder) {
-    if let Some(btn_unlock_pacman) = page_builder.object::<gtk4::Button>("btn_unlock_pacman") {
-        btn_unlock_pacman.connect_clicked(move |button| {
+    let btn_unlock_pacman = extract_widget::<gtk4::Button>(page_builder, "btn_unlock_pacman");
+    btn_unlock_pacman.connect_clicked(move |button| {
             info!("Servicing: Unlock Pacman DB button clicked");
             let commands = CommandSequence::new()
                 .then(
@@ -79,12 +79,11 @@ fn setup_unlock_pacman(page_builder: &Builder) {
                 task_runner::run(window_ref, commands, "Unlock Pacman Database");
             }
         });
-    }
 }
 
 fn setup_plasma_x11(page_builder: &Builder) {
-    if let Some(btn_plasma_x11) = page_builder.object::<gtk4::Button>("btn_plasma_x11") {
-        btn_plasma_x11.connect_clicked(move |button| {
+    let btn_plasma_x11 = extract_widget::<gtk4::Button>(page_builder, "btn_plasma_x11");
+    btn_plasma_x11.connect_clicked(move |button| {
             info!("Servicing: Plasma X11 Session button clicked");
             let commands = CommandSequence::new()
                 .then(
@@ -104,12 +103,11 @@ fn setup_plasma_x11(page_builder: &Builder) {
                 task_runner::run(window_ref, commands, "Install KDE X11 Session");
             }
         });
-    }
 }
 
 fn setup_vm_guest_utils(page_builder: &Builder) {
-    if let Some(btn_vm_guest_utils) = page_builder.object::<gtk4::Button>("btn_vm_guest_utils") {
-        btn_vm_guest_utils.connect_clicked(move |button| {
+    let btn_vm_guest_utils = extract_widget::<gtk4::Button>(page_builder, "btn_vm_guest_utils");
+    btn_vm_guest_utils.connect_clicked(move |button| {
             info!("Servicing: VM Guest Utils button clicked");
             let output = std::process::Command::new("systemd-detect-virt").output();
             let mut commands = CommandSequence::new();
@@ -181,23 +179,21 @@ fn setup_vm_guest_utils(page_builder: &Builder) {
                 }
             }
         });
-    }
 }
 
 fn setup_waydroid_guide(page_builder: &Builder) {
-    if let Some(btn_waydroid_guide) = page_builder.object::<gtk4::Button>("btn_waydroid_guide") {
-        btn_waydroid_guide.connect_clicked(move |_| {
+    let btn_waydroid_guide = extract_widget::<gtk4::Button>(page_builder, "btn_waydroid_guide");
+    btn_waydroid_guide.connect_clicked(move |_| {
             info!("Servicing: WayDroid Guide button clicked - opening guide");
             let _ = std::process::Command::new("xdg-open")
                 .arg("https://xerolinux.xyz/posts/waydroid-guide/")
                 .spawn();
         });
-    }
 }
 
 fn setup_fix_gpgme(page_builder: &Builder) {
-    if let Some(btn_fix_gpgme) = page_builder.object::<gtk4::Button>("btn_fix_gpgme") {
-        btn_fix_gpgme.connect_clicked(move |button| {
+    let btn_fix_gpgme = extract_widget::<gtk4::Button>(page_builder, "btn_fix_gpgme");
+    btn_fix_gpgme.connect_clicked(move |button| {
             info!("Servicing: Fix GPGME Database button clicked");
             let widget = button.clone().upcast::<gtk4::Widget>();
             if let Some(window) = widget
@@ -213,13 +209,11 @@ fn setup_fix_gpgme(page_builder: &Builder) {
                 );
             }
         });
-    }
 }
 
 fn setup_fix_arch_keyring(page_builder: &Builder) {
-    if let Some(btn_fix_arch_keyring) = page_builder.object::<gtk4::Button>("btn_fix_arch_keyring")
-    {
-        btn_fix_arch_keyring.connect_clicked(move |button| {
+    let btn_fix_arch_keyring = extract_widget::<gtk4::Button>(page_builder, "btn_fix_arch_keyring");
+    btn_fix_arch_keyring.connect_clicked(move |button| {
             info!("Servicing: Fix Arch Keyring button clicked");
             let commands = CommandSequence::new()
                 .then(Command::builder()
@@ -262,14 +256,11 @@ fn setup_fix_arch_keyring(page_builder: &Builder) {
                 task_runner::run(window_ref, commands, "Fix GnuPG Keyring");
             }
         });
-    }
 }
 
 fn setup_update_mirrorlist(page_builder: &Builder) {
-    if let Some(btn_update_mirrorlist) =
-        page_builder.object::<gtk4::Button>("btn_update_mirrorlist")
-    {
-        btn_update_mirrorlist.connect_clicked(move |button| {
+    let btn_update_mirrorlist = extract_widget::<gtk4::Button>(page_builder, "btn_update_mirrorlist");
+    btn_update_mirrorlist.connect_clicked(move |button| {
             info!("Servicing: Update Mirrorlist button clicked");            let widget = button.clone().upcast::<gtk4::Widget>();
             let window = widget.root().and_then(|r| r.downcast::<ApplicationWindow>().ok());
             if let Some(window) = window {
@@ -323,14 +314,11 @@ fn setup_update_mirrorlist(page_builder: &Builder) {
                 });
             }
         });
-    }
 }
 
 fn setup_parallel_downloads(page_builder: &Builder) {
-    if let Some(btn_parallel_downloads) =
-        page_builder.object::<gtk4::Button>("btn_parallel_downloads")
-    {
-        btn_parallel_downloads.connect_clicked(move |button| {
+    let btn_parallel_downloads = extract_widget::<gtk4::Button>(page_builder, "btn_parallel_downloads");
+    btn_parallel_downloads.connect_clicked(move |button| {
             info!("Servicing: Change Parallel Downloads button clicked");
             let widget = button.clone().upcast::<gtk4::Widget>();
             if let Some(window) = widget
@@ -346,5 +334,4 @@ fn setup_parallel_downloads(page_builder: &Builder) {
                 );
             }
         });
-    }
 }

@@ -9,6 +9,7 @@
 use super::command::{Command, CommandResult, CommandType, TaskStatus};
 use super::widgets::TaskRunnerWidgets;
 use crate::core;
+use crate::core::daemon::get_xero_auth_path;
 use gtk4::gio;
 use gtk4::glib;
 use log::{error, info};
@@ -22,6 +23,7 @@ pub struct RunningContext {
     pub index: usize,
     pub cancelled: Rc<RefCell<bool>>,
     pub current_process: Rc<RefCell<Option<gio::Subprocess>>>,
+    pub daemon_handle: Option<Rc<RefCell<Option<std::process::Child>>>>,
     exit_result: RefCell<Option<CommandResult>>,
 }
 
@@ -33,6 +35,7 @@ impl RunningContext {
         index: usize,
         cancelled: Rc<RefCell<bool>>,
         current_process: Rc<RefCell<Option<gio::Subprocess>>>,
+        daemon_handle: Option<Rc<RefCell<Option<std::process::Child>>>>,
     ) -> Rc<Self> {
         Rc::new(Self {
             widgets,
@@ -40,6 +43,7 @@ impl RunningContext {
             index,
             cancelled,
             current_process,
+            daemon_handle,
             exit_result: RefCell::new(None),
         })
     }
@@ -69,7 +73,12 @@ impl RunningContext {
             // Mark the current task as cancelled
             self.widgets
                 .update_task_status(self.index, TaskStatus::Cancelled);
-            finalize_execution(&self.widgets, false, super::CANCELLED_MESSAGE);
+            finalize_execution(
+                &self.widgets,
+                false,
+                super::CANCELLED_MESSAGE,
+                self.daemon_handle.as_ref(),
+            );
             return;
         }
 
@@ -84,6 +93,7 @@ impl RunningContext {
                     self.index + 1,
                     self.cancelled.clone(),
                     self.current_process.clone(),
+                    self.daemon_handle.clone(),
                 );
             }
             CommandResult::Failure { .. } => {
@@ -97,7 +107,12 @@ impl RunningContext {
                     self.commands.len()
                 );
 
-                finalize_execution(&self.widgets, false, &final_message);
+                finalize_execution(
+                    &self.widgets,
+                    false,
+                    &final_message,
+                    self.daemon_handle.as_ref(),
+                );
             }
         }
     }
@@ -110,18 +125,19 @@ pub fn execute_commands(
     index: usize,
     cancelled: Rc<RefCell<bool>>,
     current_process: Rc<RefCell<Option<gio::Subprocess>>>,
+    daemon_handle: Option<Rc<RefCell<Option<std::process::Child>>>>,
 ) {
     if *cancelled.borrow() {
         // If there's a current task being processed, mark it as cancelled
         if index < commands.len() {
             widgets.update_task_status(index, TaskStatus::Cancelled);
         }
-        finalize_execution(&widgets, false, super::CANCELLED_MESSAGE);
+        finalize_execution(&widgets, false, super::CANCELLED_MESSAGE, daemon_handle.as_ref());
         return;
     }
 
     if index >= commands.len() {
-        finalize_execution(&widgets, true, super::SUCCESS_MESSAGE);
+        finalize_execution(&widgets, true, super::SUCCESS_MESSAGE, daemon_handle.as_ref());
         return;
     }
 
@@ -140,6 +156,7 @@ pub fn execute_commands(
                 &widgets,
                 false,
                 &format!("Failed to prepare command: {}", err),
+                daemon_handle.as_ref(),
             );
             return;
         }
@@ -160,6 +177,7 @@ pub fn execute_commands(
         index,
         cancelled.clone(),
         current_process.clone(),
+        daemon_handle.clone(),
     );
 
     // Display command header
@@ -179,6 +197,7 @@ pub fn execute_commands(
                 &widgets,
                 false,
                 &format!("Failed to start operation: {}", err),
+                daemon_handle.as_ref(),
             );
             return;
         }
@@ -198,13 +217,11 @@ pub fn execute_commands(
     let (stderr_tx, stderr_rx) = mpsc::channel();
 
     // Spawn thread to read stdout
-    let stdout_handle = if let Some(stdout) = child_arc
+    let stdout_handle = child_arc
         .lock()
         .unwrap()
         .as_mut()
-        .and_then(|c| c.stdout.take())
-    {
-        Some(thread::spawn(move || {
+        .and_then(|c| c.stdout.take()).map(|stdout| thread::spawn(move || {
             let reader = BufReader::new(stdout);
             for line in reader.lines() {
                 match line {
@@ -217,19 +234,14 @@ pub fn execute_commands(
                     }
                 }
             }
-        }))
-    } else {
-        None
-    };
+        }));
 
     // Spawn thread to read stderr
-    let stderr_handle = if let Some(stderr) = child_arc
+    let stderr_handle = child_arc
         .lock()
         .unwrap()
         .as_mut()
-        .and_then(|c| c.stderr.take())
-    {
-        Some(thread::spawn(move || {
+        .and_then(|c| c.stderr.take()).map(|stderr| thread::spawn(move || {
             let reader = BufReader::new(stderr);
             for line in reader.lines() {
                 match line {
@@ -242,10 +254,7 @@ pub fn execute_commands(
                     }
                 }
             }
-        }))
-    } else {
-        None
-    };
+        }));
 
     // Process output in main thread
     let widgets_stdout = widgets.clone();
@@ -321,9 +330,7 @@ pub fn execute_commands(
     });
 }
 
-/// Resolve command with proper privilege escalation and AUR helpers.
-///
-/// Converts a `Command` into the actual program and arguments that should be executed,
+/// Resolve command to executable program and arguments,
 /// handling privilege escalation (pkexec) and AUR helper detection.
 ///
 /// # Returns
@@ -338,28 +345,50 @@ fn resolve_command(command: &Command) -> Result<(String, Vec<String>), String> {
     match command.command_type {
         CommandType::Normal => Ok((command.program.clone(), command.args.clone())),
         CommandType::Privileged => {
+            // Use xero-auth client instead of pkexec for better session reuse
             let mut args = Vec::with_capacity(command.args.len() + 1);
             args.push(command.program.clone());
             args.extend(command.args.clone());
-            Ok(("pkexec".to_string(), args))
+            Ok((get_xero_auth_path(), args))
         }
         CommandType::Aur => {
             let helper = core::aur_helper()
                 .ok_or_else(|| "AUR helper not available (paru or yay required)".to_string())?;
             let mut args = Vec::with_capacity(command.args.len() + 2);
-
             args.push("--sudo".to_string());
-            args.push("pkexec".to_string());
+            args.push(get_xero_auth_path());
             args.extend(command.args.clone());
             Ok((helper.to_string(), args))
         }
     }
 }
 
-/// Finalize dialog with success or failure message.
-pub fn finalize_execution(widgets: &TaskRunnerWidgets, success: bool, message: &str) {
-    use std::sync::atomic::Ordering;
-    super::ACTION_RUNNING.store(false, Ordering::SeqCst);
+/// Stop the daemon if needed.
+fn stop_daemon_if_needed(
+    daemon_handle: Option<&Rc<RefCell<Option<std::process::Child>>>>,
+) {
+    let mut handle_opt = daemon_handle
+        .and_then(|rc| rc.borrow_mut().take());
+    
+    let rt = tokio::runtime::Runtime::new().unwrap();
+    if let Err(e) = rt.block_on(crate::core::daemon::stop_daemon(handle_opt.as_mut())) {
+        error!("Failed to stop daemon: {}", e);
+    }
+}
 
+/// Finalize dialog with success or failure message.
+pub fn finalize_execution(
+    widgets: &TaskRunnerWidgets,
+    success: bool,
+    message: &str,
+    daemon_handle: Option<&Rc<RefCell<Option<std::process::Child>>>>,
+) {
+    use std::sync::atomic::Ordering;
+    
+    // Stop daemon before finalizing
+    stop_daemon_if_needed(daemon_handle);
+    
+    super::ACTION_RUNNING.store(false, Ordering::SeqCst);
     widgets.show_completion(success, message);
 }
+

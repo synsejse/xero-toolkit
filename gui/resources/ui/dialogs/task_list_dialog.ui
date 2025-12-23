@@ -36,41 +36,41 @@
                         <property name="min-sidebar-width">350</property>
 
                         <!-- Main content: Task list -->
-                        <property name="content">
+                <property name="content">
+                    <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">12</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-bottom">12</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+
+                        <!-- Header: Title + Subtitle centered -->
+                        <child>
                             <object class="GtkBox">
                                 <property name="orientation">vertical</property>
-                                <property name="spacing">12</property>
-                                <property name="margin-top">12</property>
-                                <property name="margin-bottom">12</property>
-                                <property name="margin-start">12</property>
-                                <property name="margin-end">12</property>
+                                <property name="spacing">4</property>
+                                <property name="halign">center</property>
 
-                                <!-- Header: Title + Subtitle centered -->
                                 <child>
-                                    <object class="GtkBox">
-                                        <property name="orientation">vertical</property>
-                                        <property name="spacing">4</property>
-                                        <property name="halign">center</property>
-
-                                        <child>
-                                            <object class="GtkLabel" id="task_title">
+                                    <object class="GtkLabel" id="task_title">
                                                 <property name="label">Running operations…</property>
-                                                <property name="wrap">true</property>
-                                                <property name="xalign">0.5</property>
+                                        <property name="wrap">true</property>
+                                        <property name="xalign">0.5</property>
                                                 <property name="halign">center</property>
-                                            </object>
-                                        </child>
-
-                                        <child>
-                                            <object class="GtkLabel" id="task_subtitle">
-                                                <property name="label">This may take a while.</property>
-                                                <property name="wrap">true</property>
-                                                <property name="xalign">0.5</property>
-                                                <property name="halign">center</property>
-                                            </object>
-                                        </child>
                                     </object>
                                 </child>
+
+                                <child>
+                                    <object class="GtkLabel" id="task_subtitle">
+                                                <property name="label">This may take a while.</property>
+                                        <property name="wrap">true</property>
+                                        <property name="xalign">0.5</property>
+                                                <property name="halign">center</property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
 
                                 <!-- Task list container -->
                                 <child>
@@ -117,10 +117,10 @@
                                         <child>
                                             <object class="GtkButton" id="cancel_button">
                                                 <property name="label">Cancel</property>
-                                            </object>
-                                        </child>
+                                                            </object>
+                                                        </child>
 
-                                        <child>
+                                                        <child>
                                             <object class="GtkButton" id="close_button">
                                                 <property name="label">Close</property>
                                                 <property name="sensitive">false</property>
@@ -152,7 +152,7 @@
                                         <property name="hexpand">true</property>
                                         <property name="vexpand">true</property>
 
-                                        <child>
+                                <child>
                                             <object class="GtkTextView" id="output_text_view">
                                                 <property name="editable">false</property>
                                                 <property name="monospace">true</property>
@@ -161,8 +161,8 @@
                                                 <property name="right-margin">12</property>
                                                 <property name="top-margin">12</property>
                                                 <property name="bottom-margin">12</property>
-                                            </object>
-                                        </child>
+                                    </object>
+                                </child>
                                     </object>
                                 </property>
                             </object>

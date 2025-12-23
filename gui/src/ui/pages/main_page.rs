@@ -8,6 +8,7 @@
 
 use crate::config;
 use crate::core;
+use crate::ui::app::extract_widget;
 use crate::ui::dialogs::download::show_download_dialog;
 use crate::ui::dialogs::selection::{
     show_selection_dialog, SelectionDialogConfig, SelectionOption,
@@ -29,9 +30,7 @@ pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder) {
 
 /// Setup system update button.
 fn setup_update_system(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_update_system") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_update_system");
 
     button.connect_clicked(move |btn| {
         info!("Update System button clicked");
@@ -52,9 +51,7 @@ fn setup_update_system(builder: &Builder) {
 
 /// Setup package manager GUI button.
 fn setup_pkg_manager(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_pkg_manager") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_pkg_manager");
 
     button.connect_clicked(move |btn| {
         info!("PKG Manager GUI button clicked");
@@ -194,9 +191,7 @@ fn build_pkg_manager_commands(selected: &[String]) -> CommandSequence {
 
 /// Setup download Arch ISO button.
 fn setup_download_arch_iso(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_download_arch_iso") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_download_arch_iso");
 
     button.connect_clicked(move |btn| {
         info!("Download Arch ISO button clicked");
@@ -211,9 +206,7 @@ fn setup_download_arch_iso(builder: &Builder) {
 
 /// Setup Nix package manager installation button.
 fn setup_install_nix(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_install_nix") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_install_nix");
 
     button.connect_clicked(move |btn| {
         info!("Install Nix button clicked");
@@ -360,33 +353,29 @@ fn setup_install_nix(builder: &Builder) {
 
 /// Setup external link buttons.
 fn setup_external_links(builder: &Builder) {
-    if let Some(btn) = builder.object::<Button>("link_discord") {
-        btn.connect_clicked(|_| {
-            info!("Discord link clicked");
-            let _ = core::package::open_url(config::links::DISCORD);
-        });
-    }
+    let btn_discord = extract_widget::<Button>(builder, "link_discord");
+    btn_discord.connect_clicked(|_| {
+        info!("Discord link clicked");
+        let _ = core::package::open_url(config::links::DISCORD);
+    });
 
-    if let Some(btn) = builder.object::<Button>("link_youtube") {
-        btn.connect_clicked(|_| {
-            info!("YouTube link clicked");
-            let _ = core::package::open_url(config::links::YOUTUBE);
-        });
-    }
+    let btn_youtube = extract_widget::<Button>(builder, "link_youtube");
+    btn_youtube.connect_clicked(|_| {
+        info!("YouTube link clicked");
+        let _ = core::package::open_url(config::links::YOUTUBE);
+    });
 
-    if let Some(btn) = builder.object::<Button>("link_website") {
-        btn.connect_clicked(|_| {
-            info!("Website link clicked");
-            let _ = core::package::open_url(config::links::WEBSITE);
-        });
-    }
+    let btn_website = extract_widget::<Button>(builder, "link_website");
+    btn_website.connect_clicked(|_| {
+        info!("Website link clicked");
+        let _ = core::package::open_url(config::links::WEBSITE);
+    });
 
-    if let Some(btn) = builder.object::<Button>("link_donate") {
-        btn.connect_clicked(|_| {
-            info!("Donate link clicked");
-            let _ = core::package::open_url(config::links::DONATE);
-        });
-    }
+    let btn_donate = extract_widget::<Button>(builder, "link_donate");
+    btn_donate.connect_clicked(|_| {
+        info!("Donate link clicked");
+        let _ = core::package::open_url(config::links::DONATE);
+    });
 }
 
 /// Helper to get the parent window from a button.

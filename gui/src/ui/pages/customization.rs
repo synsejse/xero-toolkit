@@ -7,6 +7,7 @@
 //! - Plasma wallpapers
 //! - Layan GTK4 patch
 
+use crate::ui::app::extract_widget;
 use crate::ui::task_runner::{self, Command, CommandSequence};
 use gtk4::prelude::*;
 use gtk4::{ApplicationWindow, Builder, Button};
@@ -22,9 +23,7 @@ pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder) {
 }
 
 fn setup_zsh_aio(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_zsh_aio") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_zsh_aio");
 
     button.connect_clicked(move |btn| {
         info!("ZSH AiO button clicked");
@@ -149,9 +148,7 @@ fn setup_zsh_aio(builder: &Builder) {
 }
 
 fn setup_save_desktop(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_save_desktop") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_save_desktop");
 
     button.connect_clicked(move |btn| {
         info!("Save Desktop Tool button clicked");
@@ -180,9 +177,7 @@ fn setup_save_desktop(builder: &Builder) {
 }
 
 fn setup_grub_theme(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_grub_theme") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_grub_theme");
 
     button.connect_clicked(move |btn| {
         info!("GRUB Theme button clicked");
@@ -235,9 +230,7 @@ fn setup_grub_theme(builder: &Builder) {
 }
 
 fn setup_wallpapers(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_wallpapers") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_wallpapers");
 
     button.connect_clicked(move |btn| {
         info!("Plasma Wallpapers button clicked");
@@ -265,9 +258,7 @@ fn setup_wallpapers(builder: &Builder) {
 }
 
 fn setup_layan_patch(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_layan_patch") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_layan_patch");
 
     button.connect_clicked(move |btn| {
         info!("Layan GTK4 Patch button clicked");

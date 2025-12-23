@@ -59,7 +59,7 @@ use crate::ui::app::extract_widget;
 use gtk4::glib;
 use gtk4::prelude::*;
 use gtk4::{Button, Label, Separator, ToggleButton, Window};
-use log::{error, warn};
+use log::{error, info, warn};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -67,7 +67,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 // Re-export public API
 pub use command::{Command, TaskStatus};
 
-use executor::execute_commands;
 use widgets::{TaskItem, TaskRunnerWidgets};
 
 /// Helper for building sequences of commands with a fluent API.
@@ -218,7 +217,7 @@ pub fn run(parent: &Window, commands: CommandSequence, title: &str) {
 
     // Initialize output buffer
     output_text_buffer.set_text("Command outputs will appear here as tasks execute...\n\n");
-
+    
     let widgets = Rc::new(TaskRunnerWidgets::new(
         window.clone(),
         title_label,
@@ -266,6 +265,39 @@ pub fn run(parent: &Window, commands: CommandSequence, title: &str) {
 
     window.present();
 
+    // Check if we need the daemon (any privileged or AUR commands)
+    let needs_daemon = commands.iter().any(|cmd| {
+        matches!(cmd.command_type, command::CommandType::Privileged | command::CommandType::Aur)
+    });
+
+    // Start daemon if needed
+    let mut daemon_handle: Option<std::process::Child> = None;
+    if needs_daemon {
+        match crate::core::daemon::start_daemon() {
+            Ok(handle_opt) => {
+                daemon_handle = handle_opt;
+                if daemon_handle.is_some() {
+                    info!("Daemon started for privileged commands");
+                } else {
+                    info!("Daemon was already running");
+                }
+            }
+            Err(e) => {
+                error!("Failed to start daemon: {}", e);
+                widgets.set_title(&format!("Failed to start authentication daemon: {}", e));
+                widgets.show_completion(false, "Failed to start authentication daemon");
+                return;
+            }
+        }
+    }
+
+    // Store daemon handle in a refcell for passing through execution
+    let daemon_handle_rc = if daemon_handle.is_some() {
+        Some(Rc::new(RefCell::new(daemon_handle)))
+    } else {
+        None
+    };
+
     // Start executing commands
-    execute_commands(widgets, commands, 0, cancelled, current_process);
+    executor::execute_commands(widgets, commands, 0, cancelled, current_process, daemon_handle_rc);
 }

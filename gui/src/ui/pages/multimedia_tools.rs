@@ -5,6 +5,7 @@
 //! - Jellyfin server installation
 
 use crate::core;
+use crate::ui::app::extract_widget;
 use crate::ui::dialogs::selection::{
     show_selection_dialog, SelectionDialogConfig, SelectionOption,
 };
@@ -20,8 +21,8 @@ pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder) {
 }
 
 fn setup_obs_studio_aio(page_builder: &Builder) {
-    if let Some(btn_obs_studio_aio) = page_builder.object::<gtk4::Button>("btn_obs_studio_aio") {
-        btn_obs_studio_aio.connect_clicked(move |button| {
+    let btn_obs_studio_aio = extract_widget::<gtk4::Button>(page_builder, "btn_obs_studio_aio");
+    btn_obs_studio_aio.connect_clicked(move |button| {
             info!("Multimedia tools: OBS-Studio AiO button clicked");            let widget = button.clone().upcast::<gtk4::Widget>();
             let window = widget.root().and_then(|r| r.downcast::<ApplicationWindow>().ok());
 
@@ -208,12 +209,11 @@ fn setup_obs_studio_aio(page_builder: &Builder) {
                 });
             }
         });
-    }
 }
 
 fn setup_jellyfin(page_builder: &Builder) {
-    if let Some(btn_jellyfin) = page_builder.object::<gtk4::Button>("btn_jellyfin") {
-        btn_jellyfin.connect_clicked(move |button| {
+    let btn_jellyfin = extract_widget::<gtk4::Button>(page_builder, "btn_jellyfin");
+    btn_jellyfin.connect_clicked(move |button| {
             info!("Multimedia tools: Jellyfin button clicked");
             let commands = CommandSequence::new()
                 .then(
@@ -249,5 +249,4 @@ fn setup_jellyfin(page_builder: &Builder) {
                 task_runner::run(window_ref, commands, "Jellyfin Server Setup");
             }
         });
-    }
 }

@@ -4,6 +4,7 @@
 //! - Tailscale VPN
 //! - ASUS ROG laptop tools
 
+use crate::ui::app::extract_widget;
 use crate::ui::task_runner::{self, Command, CommandSequence};
 use gtk4::prelude::*;
 use gtk4::{ApplicationWindow, Builder, Button};
@@ -16,9 +17,7 @@ pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder) {
 }
 
 fn setup_tailscale(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_tailscale") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_tailscale");
 
     button.connect_clicked(move |btn| {
         info!("Tailscale VPN button clicked");
@@ -44,9 +43,7 @@ fn setup_tailscale(builder: &Builder) {
 }
 
 fn setup_asus_rog(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_asus_rog") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_asus_rog");
 
     button.connect_clicked(move |btn| {
         info!("ASUS ROG Tools button clicked");

@@ -6,6 +6,7 @@
 //! - LACT GPU overclocking
 //! - Game launchers (Lutris, Heroic, Bottles)
 
+use crate::ui::app::extract_widget;
 use crate::ui::task_runner::{self, Command, CommandSequence};
 use gtk4::prelude::*;
 use gtk4::{ApplicationWindow, Builder, Button};
@@ -22,9 +23,7 @@ pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder) {
 }
 
 fn setup_steam_aio(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_steam_aio") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_steam_aio");
 
     button.connect_clicked(move |btn| {
         info!("Steam AiO button clicked");
@@ -116,9 +115,7 @@ fn setup_steam_aio(builder: &Builder) {
 }
 
 fn setup_gamescope_cfg(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_gamescope_cfg") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_gamescope_cfg");
 
     button.connect_clicked(|_| {
         info!("Gamescope CFG button clicked");
@@ -129,9 +126,7 @@ fn setup_gamescope_cfg(builder: &Builder) {
 }
 
 fn setup_lact_oc(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_lact_oc") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_lact_oc");
 
     button.connect_clicked(move |btn| {
         info!("LACT OC button clicked");
@@ -163,9 +158,7 @@ fn setup_lact_oc(builder: &Builder) {
 }
 
 fn setup_lutris(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_lutris") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_lutris");
 
     button.connect_clicked(move |btn| {
         info!("Lutris button clicked");
@@ -196,9 +189,7 @@ fn setup_lutris(builder: &Builder) {
 }
 
 fn setup_heroic(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_heroic") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_heroic");
 
     button.connect_clicked(move |btn| {
         info!("Heroic button clicked");
@@ -233,9 +224,7 @@ fn setup_heroic(builder: &Builder) {
 }
 
 fn setup_bottles(builder: &Builder) {
-    let Some(button) = builder.object::<Button>("btn_bottles") else {
-        return;
-    };
+    let button = extract_widget::<Button>(builder, "btn_bottles");
 
     button.connect_clicked(move |btn| {
         info!("Bottles button clicked");

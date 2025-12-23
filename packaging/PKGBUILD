@@ -11,6 +11,10 @@ license=('GPL-3.0-or-later')
 depends=(
     'gtk4'
     'glib2'
+    'libadwaita'
+    'vte4'
+    'flatpak'
+    'polkit'
 )
 makedepends=(
     'rust'
@@ -34,6 +38,10 @@ package() {
   install -d "${pkgdir}/opt/xero-toolkit"
   install -Dm755 "target/release/xero-toolkit" \
     "${pkgdir}/opt/xero-toolkit/xero-toolkit"
+  install -Dm755 "target/release/xero-authd" \
+    "${pkgdir}/opt/xero-toolkit/xero-authd"
+  install -Dm755 "target/release/xero-auth" \
+    "${pkgdir}/opt/xero-toolkit/xero-auth"
 
   # Convenience symlink in /usr/bin
   install -d "${pkgdir}/usr/bin"
@@ -44,7 +52,7 @@ package() {
     "${pkgdir}/usr/share/applications/xero-toolkit.desktop"
 
   # Install icon
-  install -Dm644 "resources/icons/scalable/apps/xero-toolkit.png" \
+  install -Dm644 "gui/resources/icons/scalable/apps/xero-toolkit.png" \
     "${pkgdir}/usr/share/icons/hicolor/scalable/apps/xero-toolkit.png"
 
   # Install license
