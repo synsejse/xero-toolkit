@@ -30,7 +30,6 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
         info!("Multimedia tools: OBS-Studio AiO button clicked");
         let window_ref = window.upcast_ref();
 
-                let obs_installed = core::is_flatpak_installed("com.obsproject.Studio");
                 let wayland_hotkeys_installed =
                     core::is_flatpak_installed("com.obsproject.Studio.Plugin.WaylandHotkeys");
                 let v4l2_installed = core::is_package_installed("v4l2loopback-dkms");
@@ -56,15 +55,9 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                     core::is_flatpak_installed("com.obsproject.Studio.Plugin.BackgroundRemoval");
 
                 let config = SelectionDialogConfig::new(
-                    "OBS-Studio AiO Installation",
-                    "Select which components to install. All options are optional.",
+                    "OBS-Studio & Plugins Installation",
+                    "OBS-Studio will be installed. Optionally select plugins to install.",
                 )
-                .add_option(SelectionOption::new(
-                    "obs",
-                    "OBS-Studio",
-                    "Main OBS-Studio application (Flatpak)",
-                    obs_installed,
-                ))
                 .add_option(SelectionOption::new(
                     "wayland_hotkeys",
                     "Wayland Hotkeys Plugin",
@@ -107,14 +100,14 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                 show_selection_dialog(window_ref, config, move |selected_ids| {
                     let mut commands = CommandSequence::new();
 
-                    if selected_ids.contains(&"obs".to_string()) {
-                        commands = commands.then(Command::builder()
-                            .normal()
-                            .program("flatpak")
-                            .args(&["install", "-y", "com.obsproject.Studio"])
-                            .description("Installing OBS-Studio...")
-                            .build());
-                    }
+                    // Always install OBS-Studio
+                    commands = commands.then(Command::builder()
+                        .normal()
+                        .program("flatpak")
+                        .args(&["install", "-y", "com.obsproject.Studio"])
+                        .description("Installing OBS-Studio...")
+                        .build());
+
                     if selected_ids.contains(&"wayland_hotkeys".to_string()) {
                         commands = commands.then(Command::builder()
                             .normal()
@@ -203,9 +196,7 @@ fn setup_obs_studio_aio(page_builder: &Builder, window: &ApplicationWindow) {
                             .build());
                     }
 
-                    if !commands.is_empty() {
-                        task_runner::run(window_for_closure.upcast_ref(), commands.build(), "OBS-Studio Setup");
-                    }
+                    task_runner::run(window_for_closure.upcast_ref(), commands.build(), "OBS-Studio Setup");
                 });
     });
 }
