@@ -81,6 +81,31 @@ pub mod env {
     }
 }
 
+/// Debug environment variables for seasonal effects.
+pub mod seasonal_debug {
+    pub const ENABLE_SNOW: &str = "XERO_TOOLKIT_ENABLE_SNOW";
+    pub const ENABLE_HALLOWEEN: &str = "XERO_TOOLKIT_ENABLE_HALLOWEEN";
+
+    /// Check if an environment variable is set to enable an effect.
+    /// Returns `Some(true)` if enabled, `Some(false)` if explicitly disabled, `None` if not set.
+    pub fn check_effect_env(var_name: &str) -> Option<bool> {
+        std::env::var(var_name).ok().and_then(|value| {
+            // Try parsing as boolean first
+            if let Ok(enabled) = value.parse::<bool>() {
+                return Some(enabled);
+            }
+
+            // Check for truthy/falsy string values (case-insensitive)
+            let lower = value.to_lowercase();
+            match lower.as_str() {
+                "1" | "true" | "yes" => Some(true),
+                "0" | "false" | "no" => Some(false),
+                _ => None,
+            }
+        })
+    }
+}
+
 /// UI resource paths for GResource files.
 pub mod resources {
     /// Main application window UI.

@@ -34,24 +34,30 @@ pub fn setup_mouse_tracking(window: &ApplicationWindow) -> MouseContext {
     }
 }
 
-/// Simple pseudo-random number generator for seasonal effects
-pub struct SimpleRng {
-    state: u64,
+/// Trait for effect states that need to handle window resizing.
+pub trait ResizableEffectState {
+    /// Handle window resize by adjusting particle positions to fit new dimensions.
+    fn handle_resize(&mut self, new_width: f64, new_height: f64);
 }
 
-impl SimpleRng {
-    pub fn new(seed: u64) -> Self {
-        Self { state: seed }
-    }
+/// Set up a resize handler for a drawing area that calls the state's handle_resize method.
+pub fn setup_resize_handler<F>(drawing_area: &DrawingArea, state: Rc<RefCell<Option<F>>>)
+where
+    F: ResizableEffectState + 'static,
+{
+    let state_clone = state.clone();
+    drawing_area.connect_resize(move |da, width, height| {
+        // Ignore invalid sizes to prevent division by zero or weird math later
+        if width <= 0 || height <= 0 {
+            return;
+        }
 
-    pub fn next(&mut self) -> u64 {
-        self.state = self.state.wrapping_mul(1103515245).wrapping_add(12345);
-        self.state
-    }
-
-    pub fn f64(&mut self) -> f64 {
-        (self.next() % 1000000) as f64 / 1000000.0
-    }
+        let mut state_ref = state_clone.borrow_mut();
+        if let Some(s) = state_ref.as_mut() {
+            s.handle_resize(width as f64, height as f64);
+        }
+        da.queue_draw();
+    });
 }
 
 /// Helper function to add a drawing area as an overlay to the window.
@@ -88,16 +94,16 @@ pub fn add_overlay_to_window(window: &ApplicationWindow, drawing_area: &DrawingA
         info!("Wrapping window content in overlay to cover entire window including navbar");
         // Create overlay that will wrap the entire content
         let overlay = gtk4::Overlay::new();
-        
+
         // Remove the content from the window
         adw_window.set_content(Option::<&Widget>::None);
-        
+
         // Add content as the main child of the overlay
         overlay.set_child(Some(&content_widget));
-        
+
         // Add the drawing area as an overlay
         overlay.add_overlay(drawing_area);
-        
+
         // Set the overlay as the window content
         adw_window.set_content(Some(&overlay));
         true

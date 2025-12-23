@@ -6,12 +6,17 @@
 //! - Atmospheric fog at the bottom (Subtle).
 //! - Mouse avoidance (bats scatter when the cursor approaches).
 
-use crate::ui::seasonal::common::{add_overlay_to_window, MouseContext, SimpleRng};
+use crate::config::seasonal_debug;
+use crate::ui::seasonal::common::{
+    add_overlay_to_window, setup_resize_handler, MouseContext, ResizableEffectState,
+};
 use crate::ui::seasonal::SeasonalEffect;
 use gtk4::cairo;
 use gtk4::glib;
 use gtk4::prelude::*;
 use gtk4::{ApplicationWindow, DrawingArea};
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
 use std::cell::RefCell;
 use std::f64::consts::PI;
 use std::rc::Rc;
@@ -26,6 +31,12 @@ pub struct HalloweenEffect;
 
 impl SeasonalEffect for HalloweenEffect {
     fn is_active(&self) -> bool {
+        // Check environment variable for debugging (overrides date check)
+        if let Some(enabled) = seasonal_debug::check_effect_env(seasonal_debug::ENABLE_HALLOWEEN) {
+            return enabled;
+        }
+
+        // Default: check if it's October
         if let Ok(dt) = glib::DateTime::now_utc() {
             dt.month() == 10 // October
         } else {
@@ -93,14 +104,8 @@ impl SeasonalEffect for HalloweenEffect {
             }
         });
 
-        let state_resize = Rc::clone(&state);
-        drawing_area.connect_resize(move |da, width, height| {
-            let mut state_ref = state_resize.borrow_mut();
-            if let Some(s) = state_ref.as_mut() {
-                s.handle_resize(width as f64, height as f64);
-            }
-            da.queue_draw();
-        });
+        // Set up resize handler
+        setup_resize_handler(&drawing_area, state);
 
         if add_overlay_to_window(window, &drawing_area) {
             info!("Halloween effect overlay added successfully");
@@ -126,29 +131,29 @@ struct Bat {
 
 impl Bat {
     fn new(width: f64, height: f64, seed: u64) -> Self {
-        let mut rng = SimpleRng::new(seed);
+        let mut rng = StdRng::seed_from_u64(seed);
 
-        let scale = rng.f64() * 1.0 + 0.5;
-        let direction = rng.f64() * 2.0 * PI;
-        let speed = (rng.f64() * 50.0 + BASE_SPEED) * scale;
+        let scale = rng.random_range(0.5..1.5);
+        let direction = rng.random_range(0.0..2.0 * PI);
+        let speed = rng.random_range(BASE_SPEED..BASE_SPEED + 50.0) * scale;
 
         Self {
-            x: rng.f64() * width,
-            y: rng.f64() * height,
+            x: rng.random_range(0.0..width),
+            y: rng.random_range(0.0..height),
             scale,
             velocity_x: direction.cos() * speed,
             velocity_y: direction.sin() * speed,
-            flap_phase: rng.f64() * 2.0 * PI,
-            flap_speed: rng.f64() * 5.0 + 10.0,
-            color_offset: rng.f64() * 0.1,
+            flap_phase: rng.random_range(0.0..2.0 * PI),
+            flap_speed: rng.random_range(10.0..15.0),
+            color_offset: rng.random_range(0.0..0.1),
         }
     }
 
-    fn update(&mut self, width: f64, height: f64, dt: f64, rng: &mut SimpleRng, mx: f64, my: f64) {
+    fn update(&mut self, width: f64, height: f64, dt: f64, rng: &mut StdRng, mx: f64, my: f64) {
         self.flap_phase += self.flap_speed * dt;
 
-        if rng.f64() > 0.92 {
-            let random_angle = (rng.f64() - 0.5) * 3.0;
+        if rng.random::<f64>() > 0.92 {
+            let random_angle = (rng.random::<f64>() - 0.5) * 3.0;
             let angle = self.velocity_y.atan2(self.velocity_x) + (random_angle * dt * 2.0);
             let current_speed = (self.velocity_x.powi(2) + self.velocity_y.powi(2)).sqrt();
             self.velocity_x = angle.cos() * current_speed;
@@ -281,8 +286,10 @@ impl Bat {
 
 struct BatState {
     bats: Vec<Bat>,
-    rng: SimpleRng,
+    rng: StdRng,
     last_frame_time: std::time::Instant,
+    current_width: f64,
+    current_height: f64,
 }
 
 impl BatState {
@@ -297,12 +304,18 @@ impl BatState {
 
         Self {
             bats,
-            rng: SimpleRng::new(seed),
+            rng: StdRng::seed_from_u64(seed),
             last_frame_time: std::time::Instant::now(),
+            current_width: width,
+            current_height: height,
         }
     }
 
     fn update(&mut self, width: f64, height: f64, now: std::time::Instant, mx: f64, my: f64) {
+        // Sync dimensions
+        self.current_width = width;
+        self.current_height = height;
+
         let dt_duration = now.duration_since(self.last_frame_time);
         let mut dt = dt_duration.as_secs_f64();
         if dt > 0.1 {
@@ -314,8 +327,6 @@ impl BatState {
             bat.update(width, height, dt, &mut self.rng, mx, my);
         }
     }
-
-    fn handle_resize(&mut self, _width: f64, _height: f64) {}
 
     fn draw_bats(&self, cr: &cairo::Context) {
         let mut sorted_bats: Vec<&Bat> = self.bats.iter().collect();
@@ -342,5 +353,30 @@ impl BatState {
         let _ = cr.fill();
 
         let _ = cr.restore();
+    }
+}
+
+impl ResizableEffectState for BatState {
+    fn handle_resize(&mut self, new_width: f64, new_height: f64) {
+        // Avoid division by zero
+        if self.current_width <= 0.0 || self.current_height <= 0.0 {
+            self.current_width = new_width;
+            self.current_height = new_height;
+            return;
+        }
+
+        // Calculate scale ratios
+        let scale_x = new_width / self.current_width;
+        let scale_y = new_height / self.current_height;
+
+        // Apply proportional scaling to all bats
+        for bat in &mut self.bats {
+            bat.x *= scale_x;
+            bat.y *= scale_y;
+        }
+
+        // Update stored dimensions
+        self.current_width = new_width;
+        self.current_height = new_height;
     }
 }
