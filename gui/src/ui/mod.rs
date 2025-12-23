@@ -13,6 +13,7 @@ pub mod context;
 pub mod dialogs;
 pub mod navigation;
 pub mod pages;
+pub mod seasonal;
 pub mod task_runner;
 pub mod utils;
 

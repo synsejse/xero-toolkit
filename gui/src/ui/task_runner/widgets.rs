@@ -321,7 +321,7 @@ impl TaskRunnerWidgets {
         let timestamp_end = self
             .output_text_buffer
             .iter_at_offset(start_offset + timestamp_text.len() as i32);
-        let text_start = timestamp_end.clone();
+        let text_start = timestamp_end;
         let text_end = self.output_text_buffer.end_iter();
 
         // Apply timestamp tag

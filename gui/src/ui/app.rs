@@ -56,6 +56,10 @@ pub fn setup_application_ui(app: &Application) {
     if let Some(first_page) = navigation::PAGES.first() {
         ctx.navigate_to_page(first_page.id);
     }
+
+    // Apply seasonal effects (snow for December, Halloween for October, etc.)
+    crate::ui::seasonal::apply_seasonal_effects(&window);
+
     info!("Xero Toolkit application startup complete");
 }
 
@@ -110,7 +114,10 @@ fn setup_ui_components(builder: &Builder, stack: Stack, window: &ApplicationWind
     setup_autostart_toggle(builder);
 
     // Set up about button
-    setup_about_button(builder, &window);
+    setup_about_button(builder, window);
+
+    // Set up seasonal effects toggle
+    setup_seasonal_effects_toggle(builder, window);
 
     info!("All UI components successfully initialized from UI builder");
 
@@ -159,5 +166,24 @@ fn setup_about_button(builder: &Builder, window: &ApplicationWindow) {
     button.connect_clicked(move |_| {
         info!("About button clicked");
         about::show_about_dialog(window_clone.upcast_ref());
+    });
+}
+
+/// Set up the seasonal effects toggle button in the header bar.
+fn setup_seasonal_effects_toggle(builder: &Builder, _window: &ApplicationWindow) {
+    use crate::ui::seasonal;
+
+    let toggle = extract_widget::<gtk4::ToggleButton>(builder, "seasonal_effects_toggle");
+
+    // Show/hide button based on whether any effect is active
+    let has_active = seasonal::has_active_effect();
+    toggle.set_visible(has_active);
+    toggle.set_active(seasonal::are_effects_enabled());
+
+    // Connect toggle action
+    toggle.connect_toggled(move |btn| {
+        let enabled = btn.is_active();
+        seasonal::set_effects_enabled(enabled);
+        info!("Seasonal effects {}", if enabled { "enabled" } else { "disabled" });
     });
 }

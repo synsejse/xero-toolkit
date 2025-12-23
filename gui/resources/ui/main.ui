@@ -26,6 +26,16 @@
                             </object>
                         </child>
 
+                        <!-- Seasonal effects toggle button -->
+                        <child type="end">
+                            <object class="GtkToggleButton" id="seasonal_effects_toggle">
+                                <property name="tooltip-text">Toggle seasonal effects</property>
+                                <property name="icon-name">star-symbolic</property>
+                                <property name="active">true</property>
+                                <property name="visible">false</property>
+                            </object>
+                        </child>
+
                         <!-- About button -->
                         <child type="end">
                             <object class="GtkButton" id="about_button">

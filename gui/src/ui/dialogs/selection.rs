@@ -173,7 +173,7 @@ where
             selected.len()
         );
 
-        on_confirm(selected);
+            on_confirm(selected);
 
         dialog_clone.close();
     });

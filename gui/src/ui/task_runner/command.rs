@@ -294,7 +294,7 @@ impl CommandResult {
             } => {
                 let output = stderr
                     .as_deref()
-                    .or_else(|| stdout.as_deref())
+                    .or(stdout.as_deref())
                     .unwrap_or("No output captured");
 
                 let exit_msg = exit_code
