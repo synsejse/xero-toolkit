@@ -133,7 +133,7 @@
 
                                                 <child>
                                                     <object class="AdwPreferencesGroup">
-                                                        <property name="title">Backend &amp; Misc</property>
+                                                        <property name="title">Backend &amp;amp; Misc</property>
                                                         <child>
                                                             <object class="AdwComboRow" id="combo_backend">
                                                                 <property name="title">Backend</property>
