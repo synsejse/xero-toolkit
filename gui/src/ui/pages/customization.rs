@@ -131,6 +131,18 @@ fn setup_zsh_aio(builder: &Builder, window: &ApplicationWindow) {
                 .description("Downloading XeroLinux ZSH configuration...")
                 .build())
             .then(Command::builder()
+                .normal()
+                .program("sh")
+                .args(&[
+                    "-c",
+                    &format!(
+                        "sed -i 's|Command=/bin/bash|Command=/bin/zsh|g' {}/.local/share/konsole/XeroLinux.profile 2>/dev/null || true",
+                        home
+                    ),
+                ])
+                .description("Updating Konsole profile to use ZSH...")
+                .build())
+            .then(Command::builder()
                 .privileged()
                 .program("chsh")
                 .args(&[&user, "-s", "/bin/zsh"])
