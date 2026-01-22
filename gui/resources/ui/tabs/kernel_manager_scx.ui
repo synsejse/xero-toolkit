@@ -1,242 +1,255 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
     <requires lib="gtk" version="4.0"/>
+    <requires lib="libadwaita" version="1.0"/>
 
     <object class="GtkBox" id="page_kernel_manager_scx">
         <property name="orientation">vertical</property>
-        <property name="spacing">0</property>
-        <property name="margin-top">48</property>
-        <property name="margin-bottom">48</property>
-        <property name="margin-start">48</property>
-        <property name="margin-end">48</property>
-        <property name="hexpand">true</property>
-        <property name="vexpand">true</property>
-        <property name="halign">fill</property>
-        <property name="valign">fill</property>
 
-        <!-- Top Section: Header (fixed at top) -->
+        <!-- Header Section -->
         <child>
             <object class="GtkBox">
                 <property name="orientation">vertical</property>
-                <property name="spacing">16</property>
-                <property name="halign">center</property>
-                <property name="valign">start</property>
-                <property name="vexpand">false</property>
-
-                <child>
-                    <object class="GtkImage">
-                        <property name="icon-name">hammer-symbolic</property>
-                        <property name="pixel-size">96</property>
-                        <property name="halign">center</property>
-                    </object>
-                </child>
-
+                <property name="spacing">6</property>
+                <property name="margin-top">24</property>
+                <property name="margin-bottom">24</property>
                 <child>
                     <object class="GtkLabel">
                         <property name="label">Kernel Manager</property>
-                        <property name="css-classes">title-1</property>
-                        <property name="halign">center</property>
+                        <style>
+                            <class name="title-1"/>
+                        </style>
                     </object>
                 </child>
-
                 <child>
                     <object class="GtkLabel">
                         <property name="label">Install and manage Linux kernels with headers</property>
-                        <property name="css-classes">dim</property>
-                        <property name="halign">center</property>
-                        <property name="wrap">true</property>
-                        <property name="justify">center</property>
+                        <style>
+                            <class name="dim-label"/>
+                        </style>
                     </object>
                 </child>
             </object>
         </child>
 
-        <!-- Main Content Section -->
+        <!-- Main Content -->
         <child>
-            <object class="GtkBox">
-                <property name="orientation">vertical</property>
-                <property name="spacing">24</property>
-                <property name="halign">fill</property>
-                <property name="valign">start</property>
+            <object class="GtkScrolledWindow">
                 <property name="vexpand">true</property>
-                <property name="margin-top">32</property>
-
-                <!-- Kernel Lists Section -->
+                <property name="hscrollbar-policy">never</property>
                 <child>
-                    <object class="GtkBox">
-                        <property name="orientation">horizontal</property>
-                        <property name="spacing">16</property>
-                        <property name="halign">fill</property>
-                        <property name="hexpand">true</property>
-                        <property name="homogeneous">true</property>
-
-                        <!-- Installed Kernels Group -->
+                    <object class="AdwClamp">
+                        <property name="maximum-size">1200</property>
+                        <property name="tightening-threshold">900</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-bottom">24</property>
                         <child>
                             <object class="GtkBox">
                                 <property name="orientation">vertical</property>
-                                <property name="spacing">8</property>
-                                <property name="hexpand">true</property>
+                                <property name="spacing">24</property>
 
-                                <!-- Header -->
+                                <!-- Kernel Lists Section -->
                                 <child>
                                     <object class="GtkBox">
-                                        <property name="orientation">vertical</property>
-                                        <property name="spacing">4</property>
+                                        <property name="orientation">horizontal</property>
+                                        <property name="spacing">24</property>
+                                        <property name="homogeneous">true</property>
+                                        <property name="valign">start</property>
 
+                                        <!-- Installed Kernels -->
                                         <child>
-                                            <object class="GtkLabel">
-                                                <property name="label">📦 Installed Kernels</property>
-                                                <property name="css-classes">title-3</property>
-                                                <property name="xalign">0</property>
+                                            <object class="AdwPreferencesGroup">
+                                                <property name="title">Installed Kernels</property>
+                                                <child>
+                                                    <object class="GtkLabel" id="installed_count_label">
+                                                        <property name="label">0 installed</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="margin-start">12</property>
+                                                        <property name="margin-bottom">6</property>
+                                                        <style>
+                                                            <class name="dim-label"/>
+                                                            <class name="caption"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkFrame">
+                                                        <property name="vexpand">false</property>
+                                                        <style>
+                                                            <class name="view"/>
+                                                        </style>
+                                                        <child>
+                                                            <object class="GtkScrolledWindow">
+                                                                <property name="min-content-height">300</property>
+                                                                <property name="max-content-height">400</property>
+                                                                <property name="propagate-natural-height">true</property>
+                                                                <child>
+                                                                    <object class="GtkListBox" id="installed_kernels_list">
+                                                                        <property name="selection-mode">single</property>
+                                                                        <style>
+                                                                            <class name="boxed-list"/>
+                                                                        </style>
+                                                                    </object>
+                                                                </child>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkBox">
+                                                        <property name="orientation">horizontal</property>
+                                                        <property name="spacing">8</property>
+                                                        <property name="halign">end</property>
+                                                        <property name="margin-top">12</property>
+                                                        <child>
+                                                            <object class="GtkButton" id="btn_remove_kernel">
+                                                                <property name="label">Remove Selected</property>
+                                                                <style>
+                                                                    <class name="destructive-action"/>
+                                                                </style>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
 
+                                        <!-- Available Kernels -->
                                         <child>
-                                            <object class="GtkLabel" id="installed_count_label">
-                                                <property name="label">0 installed</property>
-                                                <property name="css-classes">dim-label</property>
-                                                <property name="xalign">0</property>
+                                            <object class="AdwPreferencesGroup">
+                                                <property name="title">Available Kernels</property>
+                                                <child>
+                                                    <object class="GtkLabel" id="available_count_label">
+                                                        <property name="label">0 available</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="margin-start">12</property>
+                                                        <property name="margin-bottom">6</property>
+                                                        <style>
+                                                            <class name="dim-label"/>
+                                                            <class name="caption"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkFrame">
+                                                        <property name="vexpand">false</property>
+                                                        <style>
+                                                            <class name="view"/>
+                                                        </style>
+                                                        <child>
+                                                            <object class="GtkScrolledWindow">
+                                                                <property name="min-content-height">300</property>
+                                                                <property name="max-content-height">400</property>
+                                                                <property name="propagate-natural-height">true</property>
+                                                                <child>
+                                                                    <object class="GtkListBox" id="available_kernels_list">
+                                                                        <property name="selection-mode">single</property>
+                                                                        <style>
+                                                                            <class name="boxed-list"/>
+                                                                        </style>
+                                                                    </object>
+                                                                </child>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
+                                                <child>
+                                                    <object class="GtkBox">
+                                                        <property name="orientation">horizontal</property>
+                                                        <property name="spacing">8</property>
+                                                        <property name="halign">end</property>
+                                                        <property name="margin-top">12</property>
+                                                        <child>
+                                                            <object class="GtkButton" id="btn_install_kernel">
+                                                                <property name="label">Install Selected</property>
+                                                                <style>
+                                                                    <class name="suggested-action"/>
+                                                                </style>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
                                     </object>
                                 </child>
 
-                                <!-- List Container -->
+                                <!-- Actions Section -->
                                 <child>
-                                    <object class="GtkScrolledWindow">
-                                        <property name="vexpand">true</property>
-                                        <property name="min-content-height">300</property>
-                                        <property name="has-frame">true</property>
-
+                                    <object class="AdwPreferencesGroup">
+                                        <property name="title">Actions</property>
                                         <child>
-                                            <object class="GtkListBox" id="installed_kernels_list">
-                                                <property name="selection-mode">single</property>
-                                                <property name="css-classes">boxed-list</property>
+                                            <object class="AdwActionRow">
+                                                <property name="title">Refresh Kernel Lists</property>
+                                                <property name="subtitle">Scan for available and installed kernels</property>
+                                                <property name="activatable-widget">btn_refresh_kernels</property>
+                                                <child>
+                                                    <object class="GtkButton" id="btn_refresh_kernels">
+                                                        <property name="icon-name">view-refresh-symbolic</property>
+                                                        <property name="valign">center</property>
+                                                        <style>
+                                                            <class name="flat"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
                                     </object>
                                 </child>
 
-                                <!-- Remove Button -->
+                                <!-- Information Section -->
                                 <child>
-                                    <object class="GtkButton" id="btn_remove_kernel">
-                                        <property name="label">🗑️ Remove Selected</property>
-                                        <property name="css-classes">destructive-action pill</property>
-                                        <property name="halign">center</property>
-                                        <property name="margin-top">8</property>
-                                    </object>
-                                </child>
-                            </object>
-                        </child>
-
-                        <!-- Available Kernels Group -->
-                        <child>
-                            <object class="GtkBox">
-                                <property name="orientation">vertical</property>
-                                <property name="spacing">8</property>
-                                <property name="hexpand">true</property>
-
-                                <!-- Header -->
-                                <child>
-                                    <object class="GtkBox">
-                                        <property name="orientation">vertical</property>
-                                        <property name="spacing">4</property>
-
+                                    <object class="AdwPreferencesGroup">
+                                        <property name="title">Information</property>
+                                        <property name="description">Important notes about kernel management</property>
                                         <child>
-                                            <object class="GtkLabel">
-                                                <property name="label">🌐 Available Kernels</property>
-                                                <property name="css-classes">title-3</property>
-                                                <property name="xalign">0</property>
+                                            <object class="AdwActionRow">
+                                                <property name="title">Automatic Headers Installation</property>
+                                                <property name="subtitle">Kernel headers are automatically installed with each kernel</property>
+                                                <child>
+                                                    <object class="GtkImage">
+                                                        <property name="icon-name">emblem-ok-symbolic</property>
+                                                        <property name="valign">center</property>
+                                                        <style>
+                                                            <class name="success"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
-
                                         <child>
-                                            <object class="GtkLabel" id="available_count_label">
-                                                <property name="label">0 available</property>
-                                                <property name="css-classes">dim-label</property>
-                                                <property name="xalign">0</property>
+                                            <object class="AdwActionRow">
+                                                <property name="title">Running Kernel Protection</property>
+                                                <property name="subtitle">The currently running kernel cannot be removed</property>
+                                                <child>
+                                                    <object class="GtkImage">
+                                                        <property name="icon-name">security-high-symbolic</property>
+                                                        <property name="valign">center</property>
+                                                        <style>
+                                                            <class name="accent"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
-                                    </object>
-                                </child>
-
-                                <!-- List Container -->
-                                <child>
-                                    <object class="GtkScrolledWindow">
-                                        <property name="vexpand">true</property>
-                                        <property name="min-content-height">300</property>
-                                        <property name="has-frame">true</property>
-
                                         <child>
-                                            <object class="GtkListBox" id="available_kernels_list">
-                                                <property name="selection-mode">single</property>
-                                                <property name="css-classes">boxed-list</property>
+                                            <object class="AdwActionRow">
+                                                <property name="title">Keep One Kernel</property>
+                                                <property name="subtitle">Always keep at least one kernel installed for system boot</property>
+                                                <child>
+                                                    <object class="GtkImage">
+                                                        <property name="icon-name">dialog-warning-symbolic</property>
+                                                        <property name="valign">center</property>
+                                                        <style>
+                                                            <class name="warning"/>
+                                                        </style>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
                                     </object>
                                 </child>
-
-                                <!-- Install Button -->
-                                <child>
-                                    <object class="GtkButton" id="btn_install_kernel">
-                                        <property name="label">⬇️ Install Selected</property>
-                                        <property name="css-classes">suggested-action pill</property>
-                                        <property name="halign">center</property>
-                                        <property name="margin-top">8</property>
-                                    </object>
-                                </child>
-                            </object>
-                        </child>
-                    </object>
-                </child>
-
-                <!-- Refresh Button -->
-                <child>
-                    <object class="GtkBox">
-                        <property name="orientation">horizontal</property>
-                        <property name="spacing">8</property>
-                        <property name="halign">center</property>
-                        <property name="margin-top">16</property>
-
-                        <child>
-                            <object class="GtkButton" id="btn_refresh_kernels">
-                                <property name="label">🔄 Refresh Kernel Lists</property>
-                                <property name="css-classes">pill</property>
-                                <property name="width-request">200</property>
-                                <property name="height-request">40</property>
-                            </object>
-                        </child>
-                    </object>
-                </child>
-
-                <!-- Info Box -->
-                <child>
-                    <object class="GtkBox">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">8</property>
-                        <property name="halign">center</property>
-                        <property name="margin-top">24</property>
-                        <property name="margin-start">48</property>
-                        <property name="margin-end">48</property>
-
-                        <child>
-                            <object class="GtkLabel">
-                                <property name="label">💡 Tips</property>
-                                <property name="css-classes">title-4</property>
-                                <property name="xalign">0</property>
-                            </object>
-                        </child>
-
-                        <child>
-                            <object class="GtkLabel">
-                                <property name="label">• Kernels and headers are automatically installed together
-• The running kernel is highlighted in the installed list
-• You cannot remove the currently running kernel
-• Always keep at least one kernel installed for system boot</property>
-                                <property name="css-classes">dim-label</property>
-                                <property name="xalign">0</property>
-                                <property name="wrap">true</property>
-                                <property name="justify">fill</property>
                             </object>
                         </child>
                     </object>
