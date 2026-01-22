@@ -90,22 +90,6 @@ fn setup_remove_button(builder: &Builder, window: &ApplicationWindow) {
         if let Some(row) = installed_list.selected_row() {
             if let Some(label) = row.child().and_then(|w| w.downcast::<Label>().ok()) {
                 let kernel_name = label.label().to_string();
-
-                // Check if this is the running kernel
-                if is_running_kernel(&kernel_name) {
-                    show_warning_confirmation(
-                        window.upcast_ref(),
-                        "Cannot Remove Running Kernel",
-                        &format!(
-                            "<b>{}</b> is currently running!\n\n\
-                            Please reboot into another kernel first.",
-                            kernel_name
-                        ),
-                        || {},
-                    );
-                    return;
-                }
-
                 remove_kernel(&kernel_name, &window, &builder);
             }
         } else {
@@ -170,43 +154,63 @@ async fn scan_and_populate_kernels(builder: &Builder, _window: &ApplicationWindo
 }
 
 /// Get list of available kernel packages from repositories.
+/// This function searches for kernel headers and then derives the kernel package names.
+/// Adapted from cachyos-kernel-manager logic.
 fn get_available_kernels() -> anyhow::Result<Vec<String>> {
+    // Search for kernel headers packages
     let output = StdCommand::new("pacman")
-        .args(["-Ss", "^linux"])
+        .args(["-Sl"])
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .output()?;
 
     if !output.status.success() {
-        return Err(anyhow::anyhow!("pacman -Ss failed"));
+        return Err(anyhow::anyhow!("pacman -Sl failed"));
     }
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     let mut kernels = Vec::new();
 
     for line in stdout.lines() {
-        // Skip empty lines and description lines (start with spaces)
-        if line.trim().is_empty() || line.starts_with(' ') {
+        // Look for lines containing 'linux' and 'headers'
+        if !line.contains("linux") || !line.contains("headers") {
             continue;
         }
 
-        // Parse lines like: extra/linux 6.6.1-1
+        // Skip testing repo and linux-api-headers
+        if line.contains("testing/") || line.contains("linux-api-headers") {
+            continue;
+        }
+
+        // Parse lines like: core linux-headers 6.6.1-1
         let parts: Vec<&str> = line.split_whitespace().collect();
-        if parts.len() >= 2 {
-            if let Some(pkg_name) = parts[0].split('/').next_back() {
-                // Filter: must start with 'linux' and be a kernel package
-                if pkg_name.starts_with("linux")
-                    && !pkg_name.contains("firmware")
-                    && !pkg_name.contains("docs")
-                    && !pkg_name.contains("api-headers")
-                    && !pkg_name.contains("tools")
-                    && !pkg_name.contains("meta")
-                    && !pkg_name.ends_with("-headers")
-                {
-                    // Only add actual kernel packages
-                    if pkg_name == "linux" || pkg_name.contains('-') {
-                        kernels.push(pkg_name.to_string());
-                    }
+        if parts.len() < 2 {
+            continue;
+        }
+
+        let pkg_name = parts[1];
+
+        // Verify this is a headers package
+        if !pkg_name.ends_with("-headers") {
+            continue;
+        }
+
+        // Derive the kernel package name by removing '-headers'
+        let kernel_name = pkg_name.strip_suffix("-headers").unwrap_or(pkg_name);
+
+        // Verify the actual kernel package exists
+        let verify_output = StdCommand::new("pacman")
+            .args(["-Ss", &format!("^{}$", kernel_name)])
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .output();
+
+        if let Ok(verify) = verify_output {
+            if verify.status.success() && !verify.stdout.is_empty() {
+                let verify_str = String::from_utf8_lossy(&verify.stdout);
+                // Check if the kernel package actually exists (not just the headers)
+                if verify_str.contains(&format!("/{}", kernel_name)) {
+                    kernels.push(kernel_name.to_string());
                 }
             }
         }
@@ -218,6 +222,7 @@ fn get_available_kernels() -> anyhow::Result<Vec<String>> {
 }
 
 /// Get list of installed kernel packages.
+/// Only returns kernels that have both the kernel and headers installed.
 fn get_installed_kernels() -> anyhow::Result<Vec<String>> {
     let output = StdCommand::new("pacman")
         .args(["-Q"])
@@ -230,27 +235,35 @@ fn get_installed_kernels() -> anyhow::Result<Vec<String>> {
     }
 
     let stdout = String::from_utf8_lossy(&output.stdout);
-    let mut kernels = Vec::new();
+    let mut installed_headers = Vec::new();
+    let mut all_packages = Vec::new();
 
+    // First pass: collect all packages and identify headers
     for line in stdout.lines() {
         if line.trim().is_empty() {
             continue;
         }
 
         let pkg_name = line.split_whitespace().next().unwrap_or("");
+        all_packages.push(pkg_name.to_string());
 
-        // Filter: must start with 'linux' and be a kernel package
+        // Find kernel headers
         if pkg_name.starts_with("linux")
-            && !pkg_name.contains("firmware")
-            && !pkg_name.contains("docs")
-            && !pkg_name.contains("api-headers")
-            && !pkg_name.contains("tools")
-            && !pkg_name.contains("meta")
-            && !pkg_name.ends_with("-headers")
+            && pkg_name.ends_with("-headers")
+            && pkg_name != "linux-api-headers"
         {
-            // Only add actual kernel packages
-            if pkg_name == "linux" || pkg_name.contains('-') {
-                kernels.push(pkg_name.to_string());
+            installed_headers.push(pkg_name.to_string());
+        }
+    }
+
+    let mut kernels = Vec::new();
+
+    // Second pass: for each headers package, check if the kernel is also installed
+    for headers_pkg in installed_headers {
+        if let Some(kernel_name) = headers_pkg.strip_suffix("-headers") {
+            // Check if the corresponding kernel package is installed
+            if all_packages.contains(&kernel_name.to_string()) {
+                kernels.push(kernel_name.to_string());
             }
         }
     }
@@ -258,15 +271,6 @@ fn get_installed_kernels() -> anyhow::Result<Vec<String>> {
     kernels.sort();
     kernels.dedup();
     Ok(kernels)
-}
-
-/// Check if a kernel is currently running.
-fn is_running_kernel(kernel_name: &str) -> bool {
-    if let Ok(output) = StdCommand::new("uname").arg("-r").output() {
-        let running = String::from_utf8_lossy(&output.stdout);
-        return running.contains(kernel_name);
-    }
-    false
 }
 
 /// Populate the installed kernels list.
@@ -286,12 +290,6 @@ fn populate_installed_list(builder: &Builder, kernels: &[String]) {
         label.set_margin_end(12);
         label.set_margin_top(8);
         label.set_margin_bottom(8);
-
-        // Highlight running kernel
-        if is_running_kernel(kernel) {
-            label.add_css_class("accent");
-            label.set_markup(&format!("<b>{}</b> (Running)", kernel));
-        }
 
         list.append(&label);
     }
