@@ -277,45 +277,73 @@
                                 <property name="hscrollbar-policy">never</property>
                                 <child>
                                     <object class="AdwClamp">
-                                        <property name="maximum-size">1200</property>
-                                        <property name="tightening-threshold">900</property>
+                                        <property name="maximum-size">800</property>
+                                        <property name="tightening-threshold">600</property>
                                         <property name="margin-start">12</property>
                                         <property name="margin-end">12</property>
-                                        <property name="margin-bottom">48</property>
+                                        <property name="margin-bottom">32</property>
                                         <property name="margin-top">24</property>
                                         <child>
                                             <object class="GtkBox">
                                                 <property name="orientation">vertical</property>
                                                 <property name="spacing">24</property>
 
-                                                <!-- System Status Section -->
+                                                <!-- Introduction -->
+                                                <child>
+                                                    <object class="GtkBox">
+                                                        <property name="orientation">vertical</property>
+                                                        <property name="spacing">6</property>
+                                                        <property name="margin-bottom">12</property>
+                                                        <child>
+                                                            <object class="GtkLabel">
+                                                                <property name="label">Sched-ext Manager</property>
+                                                                <property name="xalign">0</property>
+                                                                <style>
+                                                                    <class name="title-2"/>
+                                                                </style>
+                                                            </object>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkLabel">
+                                                                <property name="label">Manage BPF-based CPU schedulers for enhanced system performance and latency control.</property>
+                                                                <property name="wrap">true</property>
+                                                                <property name="xalign">0</property>
+                                                                <style>
+                                                                    <class name="dim-label"/>
+                                                                </style>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
+
+                                                <!-- System Status -->
                                                 <child>
                                                     <object class="AdwPreferencesGroup">
-                                                        <property name="title">Status</property>
+                                                        <property name="title">System Status</property>
                                                         <child>
                                                             <object class="AdwActionRow">
-                                                                <property name="title">Kernel Version</property>
-                                                                <property name="subtitle">Current running kernel and sched-ext support</property>
+                                                                <property name="title">Kernel Support</property>
+                                                                <property name="subtitle">Kernel version and compatibility</property>
                                                                 <child>
                                                                     <object class="GtkBox">
                                                                         <property name="orientation">horizontal</property>
-                                                                        <property name="spacing">8</property>
+                                                                        <property name="spacing">12</property>
                                                                         <property name="valign">center</property>
                                                                         <child>
                                                                             <object class="GtkImage" id="kernel_status_icon">
-                                                                                <property name="icon-name">circle-check</property>
+                                                                                <property name="icon-name">dialog-question-symbolic</property>
                                                                                 <property name="pixel-size">16</property>
                                                                             </object>
                                                                         </child>
                                                                         <child>
                                                                             <object class="GtkLabel" id="kernel_version_label">
-                                                                                <property name="label">Checking...</property>
+                                                                                <property name="label">Unknown</property>
                                                                             </object>
                                                                         </child>
+                                                                        <!-- Hidden label for compatibility -->
                                                                         <child>
                                                                             <object class="GtkLabel" id="kernel_support_label">
                                                                                 <property name="visible">false</property>
-                                                                                <property name="label">Checking...</property>
                                                                             </object>
                                                                         </child>
                                                                     </object>
@@ -323,7 +351,7 @@
                                                                 <child>
                                                                     <object class="GtkButton" id="btn_refresh_schedulers">
                                                                         <property name="icon-name">view-refresh-symbolic</property>
-                                                                        <property name="tooltip-text">Rescan available schedulers and update status</property>
+                                                                        <property name="tooltip-text">Refresh Status</property>
                                                                         <property name="valign">center</property>
                                                                         <style>
                                                                             <class name="flat"/>
@@ -335,7 +363,7 @@
                                                         <child>
                                                             <object class="AdwActionRow">
                                                                 <property name="title">Active Scheduler</property>
-                                                                <property name="subtitle">Currently running CPU scheduler</property>
+                                                                <property name="subtitle">Current CPU scheduler</property>
                                                                 <child>
                                                                     <object class="GtkLabel" id="active_scheduler_label">
                                                                         <property name="label">EEVDF (Default)</property>
@@ -349,8 +377,8 @@
                                                         </child>
                                                         <child>
                                                             <object class="AdwActionRow">
-                                                                <property name="title">Scheduler Mode</property>
-                                                                <property name="subtitle">Current operating mode</property>
+                                                                <property name="title">Operating Mode</property>
+                                                                <property name="subtitle">Current scheduler profile</property>
                                                                 <child>
                                                                     <object class="GtkLabel" id="mode_label">
                                                                         <property name="label">N/A</property>
@@ -365,20 +393,22 @@
                                                     </object>
                                                 </child>
 
-                                                <!-- Scheduler Configuration -->
+                                                <!-- Configuration & Actions -->
                                                 <child>
                                                     <object class="AdwPreferencesGroup">
                                                         <property name="title">Configuration</property>
                                                         <child>
                                                             <object class="AdwComboRow" id="scheduler_combo">
-                                                                <property name="title">Select Scheduler</property>
-                                                                <property name="subtitle">Choose which sched-ext scheduler to use</property>
+                                                                <property name="title">Scheduler</property>
+                                                                <property name="subtitle">Select sched-ext scheduler</property>
+                                                                <property name="icon-name">preferences-system-symbolic</property>
                                                             </object>
                                                         </child>
                                                         <child>
                                                             <object class="AdwComboRow" id="mode_combo">
-                                                                <property name="title">Scheduler Mode</property>
-                                                                <property name="subtitle">Select a profile that best fits your workload</property>
+                                                                <property name="title">Profile Mode</property>
+                                                                <property name="subtitle">Workload optimization target</property>
+                                                                <property name="icon-name">speedometer-symbolic</property>
                                                                 <property name="model">
                                                                     <object class="GtkStringList">
                                                                         <items>
@@ -394,48 +424,45 @@
                                                         </child>
                                                         <child>
                                                             <object class="AdwSwitchRow" id="persist_switch">
-                                                                <property name="title">Start Scheduler on Boot</property>
-                                                                <property name="subtitle">Enable systemd service to automatically start the selected scheduler</property>
+                                                                <property name="title">Start on Boot</property>
+                                                                <property name="subtitle">Automatically start service at login</property>
+                                                                <property name="icon-name">system-run-symbolic</property>
                                                             </object>
                                                         </child>
                                                     </object>
                                                 </child>
 
-                                                <!-- Actions -->
+                                                <!-- Action Buttons -->
                                                 <child>
-                                                    <object class="AdwPreferencesGroup">
-                                                        <property name="title">Actions</property>
+                                                    <object class="GtkBox">
+                                                        <property name="orientation">horizontal</property>
+                                                        <property name="spacing">12</property>
+                                                        <property name="homogeneous">true</property>
+                                                        <property name="margin-top">12</property>
+
+
+
                                                         <child>
-                                                            <object class="GtkBox">
-                                                                <property name="orientation">horizontal</property>
-                                                                <property name="spacing">12</property>
-                                                                <property name="homogeneous">true</property>
-                                                                <property name="margin-start">12</property>
-                                                                <property name="margin-end">12</property>
-                                                                <property name="margin-top">12</property>
-                                                                <property name="margin-bottom">12</property>
+                                                            <object class="GtkButton" id="btn_stop_scheduler">
+                                                                <property name="label">Stop Scheduler</property>
+                                                                <property name="tooltip-text">Revert to default kernel scheduler</property>
+                                                                <property name="height-request">50</property>
+                                                                <style>
+                                                                    <class name="destructive-action"/>
+                                                                    <class name="pill"/>
+                                                                </style>
+                                                            </object>
+                                                        </child>
 
-                                                                <child>
-                                                                    <object class="GtkButton" id="btn_switch_scheduler">
-                                                                        <property name="label">Start/Switch Scheduler</property>
-                                                                        <property name="tooltip-text">Start or switch to the selected scheduler</property>
-                                                                        <style>
-                                                                            <class name="suggested-action"/>
-                                                                            <class name="pill"/>
-                                                                        </style>
-                                                                    </object>
-                                                                </child>
-
-                                                                <child>
-                                                                    <object class="GtkButton" id="btn_stop_scheduler">
-                                                                        <property name="label">Stop Scheduler</property>
-                                                                        <property name="tooltip-text">Stop the current scheduler and return to EEVDF</property>
-                                                                        <style>
-                                                                            <class name="destructive-action"/>
-                                                                            <class name="pill"/>
-                                                                        </style>
-                                                                    </object>
-                                                                </child>
+                                                        <child>
+                                                            <object class="GtkButton" id="btn_switch_scheduler">
+                                                                <property name="label">Start/Switch Scheduler</property>
+                                                                <property name="tooltip-text">Apply selected scheduler configuration</property>
+                                                                <property name="height-request">50</property>
+                                                                <style>
+                                                                    <class name="suggested-action"/>
+                                                                    <class name="pill"/>
+                                                                </style>
                                                             </object>
                                                         </child>
                                                     </object>
