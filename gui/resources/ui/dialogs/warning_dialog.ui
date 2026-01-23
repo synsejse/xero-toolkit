@@ -5,8 +5,8 @@
 
     <object class="AdwWindow" id="warning_dialog">
         <property name="title">Xero Toolkit - Warning</property>
-        <property name="default-width">520</property>
-        <property name="default-height">300</property>
+        <property name="default-width">480</property>
+        <property name="default-height">-1</property>
         <property name="modal">true</property>
         <property name="resizable">false</property>
 
@@ -55,9 +55,12 @@
                             <object class="GtkLabel" id="warning_message">
                                 <property name="use-markup">true</property>
                                 <property name="wrap">true</property>
+                                <property name="wrap-mode">word</property>
                                 <property name="justify">center</property>
-                                <property name="halign">center</property>
+                                <property name="halign">fill</property>
+                                <property name="hexpand">true</property>
                                 <property name="vexpand">true</property>
+                                <property name="width-chars">50</property>
                                 <property name="label"><![CDATA[]]></property>
                             </object>
                         </child>
@@ -90,4 +93,3 @@
         </property>
     </object>
 </interface>
-
