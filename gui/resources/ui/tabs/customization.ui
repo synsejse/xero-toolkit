@@ -43,7 +43,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label">Customize your system appearance and behavior</property>
-                        <property name="css-classes">dim</property>
+                        <property name="css-classes">dim-label</property>
                         <property name="halign">center</property>
                         <property name="wrap">true</property>
                         <property name="justify">center</property>
