@@ -82,6 +82,13 @@ pub const PAGES: &[PageConfig] = &[
         setup_handler: Some(pages::kernel_manager::setup_handlers),
     },
     PageConfig {
+        id: "scx_scheduler",
+        title: "SCX Scheduler",
+        icon: "star-symbolic",
+        ui_resource: crate::config::resources::tabs::SCX_SCHEDULER,
+        setup_handler: Some(pages::scx_scheduler::setup_handlers),
+    },
+    PageConfig {
         id: "servicing_system_tweaks",
         title: "Servicing/System tweaks",
         icon: "toolbox-symbolic",

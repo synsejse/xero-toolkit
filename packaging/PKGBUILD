@@ -15,6 +15,8 @@ depends=(
     'vte4'
     'flatpak'
     'polkit')
+optdepends=(
+    'scxctl: SCX scheduler management for sched-ext kernels')
 makedepends=(
     'rust'
     'cargo'
@@ -42,9 +44,11 @@ package() {
   install -Dm755 "target/release/xero-auth" \
     "${pkgdir}/opt/xero-toolkit/xero-auth"
 
-  # Install scripts
-  install -d "${pkgdir}/opt/xero-toolkit/scripts"
-  install -m755 scripts/* "${pkgdir}/opt/xero-toolkit/scripts/"
+  # Install sources (scripts and systemd units)
+  install -d "${pkgdir}/opt/xero-toolkit/sources/scripts"
+  install -d "${pkgdir}/opt/xero-toolkit/sources/systemd"
+  install -m755 sources/scripts/* "${pkgdir}/opt/xero-toolkit/sources/scripts/"
+  install -m644 sources/systemd/* "${pkgdir}/opt/xero-toolkit/sources/systemd/"
 
   # Convenience symlink in /usr/bin
   install -d "${pkgdir}/usr/bin"

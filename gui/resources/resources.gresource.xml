@@ -39,6 +39,10 @@
         <file
             preprocess="xml-stripblanks"
             compressed="true"
+        >ui/tabs/scx_scheduler.ui</file>
+        <file
+            preprocess="xml-stripblanks"
+            compressed="true"
         >ui/tabs/servicing_system_tweaks.ui</file>
         <file
             preprocess="xml-stripblanks"

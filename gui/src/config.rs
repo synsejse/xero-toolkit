@@ -31,8 +31,14 @@ pub mod paths {
     /// Path to the xero-auth client binary.
     pub const CLIENT: &str = "/opt/xero-toolkit/xero-auth";
 
+    /// Path to the sources directory (contains scripts and systemd).
+    pub const SOURCES: &str = "/opt/xero-toolkit/sources";
+
     /// Path to the scripts directory.
-    pub const SCRIPTS: &str = "/opt/xero-toolkit/scripts";
+    pub const SCRIPTS: &str = "/opt/xero-toolkit/sources/scripts";
+
+    /// Path to the systemd units directory.
+    pub const SYSTEMD: &str = "/opt/xero-toolkit/sources/systemd";
 
     /// Path to the desktop file in system applications.
     pub const DESKTOP_FILE: &str = "/usr/share/applications/xero-toolkit.desktop";
@@ -50,9 +56,19 @@ pub mod paths {
         PathBuf::from(CLIENT)
     }
 
+    /// Get the sources path as a PathBuf.
+    pub fn sources() -> PathBuf {
+        PathBuf::from(SOURCES)
+    }
+
     /// Get the scripts path as a PathBuf.
     pub fn scripts() -> PathBuf {
         PathBuf::from(SCRIPTS)
+    }
+
+    /// Get the systemd units path as a PathBuf.
+    pub fn systemd() -> PathBuf {
+        PathBuf::from(SYSTEMD)
     }
 
     /// Get the desktop file path as a PathBuf.
@@ -166,6 +182,7 @@ pub mod resources {
         pub const GAMING_TOOLS: &str = "/xyz/xerolinux/xero-toolkit/ui/tabs/gaming_tools.ui";
         pub const KERNEL_MANAGER: &str = "/xyz/xerolinux/xero-toolkit/ui/tabs/kernel_manager.ui";
         pub const MAIN_PAGE: &str = "/xyz/xerolinux/xero-toolkit/ui/tabs/main_page.ui";
+        pub const SCX_SCHEDULER: &str = "/xyz/xerolinux/xero-toolkit/ui/tabs/scx_scheduler.ui";
         pub const MULTIMEDIA_TOOLS: &str =
             "/xyz/xerolinux/xero-toolkit/ui/tabs/multimedia_tools.ui";
         pub const SERVICING_SYSTEM_TWEAKS: &str =

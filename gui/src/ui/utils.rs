@@ -1,12 +1,44 @@
-//! UI utility functions for widget extraction.
+//! UI utility functions for widget extraction and common operations.
 
+use adw::prelude::ComboRowExt;
 use gtk4::glib;
 use gtk4::prelude::*;
-use gtk4::Builder;
+use gtk4::{Builder, StringList};
+use std::process::Command;
 
 /// Helper to extract widgets from builder with consistent error handling.
 pub fn extract_widget<T: IsA<glib::Object>>(builder: &Builder, name: &str) -> T {
     builder
         .object(name)
         .unwrap_or_else(|| panic!("Failed to get widget with id '{}'", name))
+}
+
+/// Get the selected string value from an AdwComboRow.
+pub fn get_combo_row_value(combo: &adw::ComboRow) -> Option<String> {
+    let model = combo.model()?;
+    let string_list = model.downcast_ref::<StringList>()?;
+    let selected = combo.selected();
+    string_list.string(selected).map(|s| s.to_string())
+}
+
+/// Run a command and return stdout as a trimmed string.
+pub fn run_command(program: &str, args: &[&str]) -> Option<String> {
+    Command::new(program)
+        .args(args)
+        .output()
+        .ok()
+        .filter(|o| o.status.success())
+        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
+}
+
+/// Check if a systemd service is enabled.
+pub fn is_service_enabled(service: &str) -> bool {
+    run_command("systemctl", &["is-enabled", service])
+        .map(|s| s.to_lowercase().contains("enabled"))
+        .unwrap_or(false)
+}
+
+/// Check if a path exists.
+pub fn path_exists(path: &str) -> bool {
+    std::path::Path::new(path).exists()
 }

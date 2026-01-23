@@ -64,30 +64,13 @@
 
                 <child>
                     <object class="GtkButton" id="btn_refresh_kernels">
+                        <property name="icon-name">view-refresh-symbolic</property>
                         <property name="tooltip-text">Scan for available and installed kernels</property>
-                        <property name="valign">start</property>
+                        <property name="valign">center</property>
                         <style>
-                            <class name="pill"/>
-                            <class name="suggested-action"/>
+                            <class name="flat"/>
+                            <class name="circular"/>
                         </style>
-                        <property name="child">
-                            <object class="GtkBox">
-                                <property name="orientation">horizontal</property>
-                                <property name="spacing">8</property>
-                                <property name="halign">center</property>
-                                <child>
-                                    <object class="GtkImage">
-                                        <property name="icon-name">view-refresh-symbolic</property>
-                                        <property name="pixel-size">16</property>
-                                    </object>
-                                </child>
-                                <child>
-                                    <object class="GtkLabel">
-                                        <property name="label">Refresh</property>
-                                    </object>
-                                </child>
-                            </object>
-                        </property>
                     </object>
                 </child>
             </object>

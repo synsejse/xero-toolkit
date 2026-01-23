@@ -1,0 +1,14 @@
+[Unit]
+Description=sched-ext BPF CPU Scheduler (@SCHEDULER@)
+Documentation=https://github.com/sched-ext/scx
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/scxctl start --sched @SCHEDULER_NAME@ --mode @MODE@
+ExecStop=/usr/bin/scxctl stop
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
