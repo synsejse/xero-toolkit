@@ -82,15 +82,13 @@
 
         <!-- Content Stack -->
         <child>
-            <object class="GtkStack" id="content_stack">
+            <object class="AdwViewStack" id="content_stack">
                 <property name="vexpand">true</property>
                 <property name="hexpand">true</property>
-                <property name="transition-type">crossfade</property>
-                <property name="transition-duration">200</property>
 
                 <!-- Kernel Manager Page -->
                 <child>
-                    <object class="GtkStackPage">
+                    <object class="AdwViewStackPage">
                         <property name="name">kernel_manager</property>
                         <property name="title">Kernel Manager</property>
                         <property name="icon-name">box-symbolic</property>
@@ -242,7 +240,7 @@
 
                 <!-- SCX Scheduler Page -->
                 <child>
-                    <object class="GtkStackPage">
+                    <object class="AdwViewStackPage">
                         <property name="name">scx_scheduler</property>
                         <property name="title">SCX Scheduler</property>
                         <property name="icon-name">gauge-symbolic</property>
