@@ -2,7 +2,6 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
-
   <object class="GtkBox" id="page_biometrics">
     <property name="orientation">vertical</property>
     <property name="spacing">0</property>
@@ -14,7 +13,6 @@
     <property name="vexpand">true</property>
     <property name="halign">fill</property>
     <property name="valign">fill</property>
-
     <!-- Header Section -->
     <child>
       <object class="GtkBox">
@@ -59,7 +57,6 @@
         </child>
       </object>
     </child>
-
     <!-- Main Content -->
     <child>
       <object class="GtkScrolledWindow">
@@ -82,7 +79,6 @@
                 <property name="valign">fill</property>
                 <property name="homogeneous">true</property>
                 <property name="vexpand">true</property>
-
                 <!-- Fingerprint Card -->
                 <child>
                   <object class="GtkBox">
@@ -148,7 +144,6 @@
                     </child>
                   </object>
                 </child>
-
                 <!-- Howdy Card -->
                 <child>
                   <object class="GtkBox">
@@ -214,7 +209,6 @@
                     </child>
                   </object>
                 </child>
-
               </object>
             </child>
           </object>

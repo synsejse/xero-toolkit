@@ -75,13 +75,6 @@ pub const PAGES: &[PageConfig] = &[
         setup_handler: Some(pages::containers_vms::setup_handlers),
     },
     PageConfig {
-        id: "multimedia_tools",
-        title: "Multimedia Tools",
-        icon: "play-symbolic",
-        ui_resource: crate::config::resources::tabs::MULTIMEDIA_TOOLS,
-        setup_handler: Some(pages::multimedia_tools::setup_handlers),
-    },
-    PageConfig {
         id: "kernel_schedulers",
         title: "Kernel & Schedulers",
         icon: "hammer-symbolic",

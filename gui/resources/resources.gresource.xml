@@ -10,7 +10,6 @@
     <file preprocess="xml-stripblanks" compressed="true">ui/tabs/gaming_tools.ui</file>
     <file preprocess="xml-stripblanks" compressed="true">ui/tabs/gamescope.ui</file>
     <file preprocess="xml-stripblanks" compressed="true">ui/tabs/containers_vms.ui</file>
-    <file preprocess="xml-stripblanks" compressed="true">ui/tabs/multimedia_tools.ui</file>
     <file preprocess="xml-stripblanks" compressed="true">ui/tabs/kernel_schedulers.ui</file>
     <file preprocess="xml-stripblanks" compressed="true">ui/tabs/servicing_system_tweaks.ui</file>
     <file preprocess="xml-stripblanks" compressed="true">ui/dialogs/selection_dialog.ui</file>
@@ -35,7 +34,6 @@
     <file compressed="true">icons/scalable/actions/gear-symbolic.svg</file>
     <file compressed="true">icons/scalable/actions/gamepad-symbolic.svg</file>
     <file compressed="true">icons/scalable/actions/box-symbolic.svg</file>
-    <file compressed="true">icons/scalable/actions/play-symbolic.svg</file>
     <file compressed="true">icons/scalable/actions/toolbox-symbolic.svg</file>
     <file compressed="true">icons/scalable/actions/hammer-symbolic.svg</file>
     <file compressed="true">icons/scalable/actions/circle-check.svg</file>
