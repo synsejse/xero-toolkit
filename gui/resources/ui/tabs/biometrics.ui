@@ -213,7 +213,7 @@
                         </child>
                         <child>
                           <object class="GtkLabel" id="lbl_howdy_desc">
-                            <property name="label">Setup Windows Hello™ style facial recognition with IR camera support</property>
+                            <property name="label">Setup Windows Hello™ style facial recognition with IR camera support (Testers Needed)</property>
                             <property name="css-classes">dim-label</property>
                             <property name="halign">center</property>
                             <property name="justify">center</property>
@@ -223,7 +223,7 @@
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_howdy_setup">
-                            <property name="label">Setup / Enable</property>
+                            <property name="label">Coming Soon</property>
                             <property name="halign">center</property>
                             <property name="margin-top">12</property>
                             <property name="width-request">140</property>
