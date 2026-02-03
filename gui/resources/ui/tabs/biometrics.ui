@@ -143,6 +143,7 @@
                         <property name="margin-bottom">24</property>
                         <property name="margin-start">24</property>
                         <property name="margin-end">24</property>
+                        <property name="vexpand">true</property>
                         <child>
                           <object class="GtkLabel" id="lbl_fingerprint_title">
                             <property name="label">Fingerprint Reader</property>
@@ -158,14 +159,18 @@
                             <property name="halign">center</property>
                             <property name="justify">center</property>
                             <property name="wrap">true</property>
-                            <property name="lines">2</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="vexpand">true</property>
                           </object>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_fingerprint_setup">
                             <property name="label">Setup / Enable</property>
                             <property name="halign">center</property>
-                            <property name="margin-top">12</property>
+                            <property name="valign">end</property>
                             <property name="width-request">140</property>
                             <property name="css-classes">suggested-action pill</property>
                           </object>
@@ -203,6 +208,7 @@
                         <property name="margin-bottom">24</property>
                         <property name="margin-start">24</property>
                         <property name="margin-end">24</property>
+                        <property name="vexpand">true</property>
                         <child>
                           <object class="GtkLabel" id="lbl_howdy_title">
                             <property name="label">Howdy Face Unlock</property>
@@ -218,14 +224,18 @@
                             <property name="halign">center</property>
                             <property name="justify">center</property>
                             <property name="wrap">true</property>
-                            <property name="lines">2</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="vexpand">true</property>
                           </object>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_howdy_setup">
                             <property name="label">Coming Soon</property>
                             <property name="halign">center</property>
-                            <property name="margin-top">12</property>
+                            <property name="valign">end</property>
                             <property name="width-request">140</property>
                             <property name="css-classes">suggested-action pill</property>
                           </object>
