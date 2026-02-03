@@ -229,15 +229,11 @@ impl LazyPageLoader {
 }
 
 /// Recursively find a child widget by name.
-fn find_child_by_name<T: IsA<gtk4::Widget>>(
-    parent: &impl IsA<gtk4::Widget>,
-    name: &str,
-) -> Option<T>
+fn find_child_by_name<T>(parent: &impl IsA<gtk4::Widget>, name: &str) -> Option<T>
 where
-    T: IsA<glib::Object>,
+    T: IsA<gtk4::Widget> + IsA<glib::Object>,
 {
     let parent_widget = parent.upcast_ref::<gtk4::Widget>();
-
     // Check direct children first
     let mut child = parent_widget.first_child();
     while let Some(widget) = child {
