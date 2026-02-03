@@ -73,13 +73,15 @@
             <property name="margin-end">12</property>
             <property name="margin-bottom">48</property>
             <property name="margin-top">24</property>
+            <property name="vexpand">true</property>
             <child>
               <object class="GtkBox">
                 <property name="orientation">horizontal</property>
                 <property name="spacing">24</property>
                 <property name="halign">center</property>
-                <property name="valign">start</property>
+                <property name="valign">fill</property>
                 <property name="homogeneous">true</property>
+                <property name="vexpand">true</property>
 
                 <!-- Fingerprint Card -->
                 <child>
@@ -87,6 +89,7 @@
                     <property name="orientation">vertical</property>
                     <property name="css-classes">card</property>
                     <property name="overflow">hidden</property>
+                    <property name="vexpand">true</property>
                     <child>
                       <object class="GtkAspectFrame" id="frame_fingerprint">
                         <property name="ratio">1.0</property>
@@ -152,6 +155,7 @@
                     <property name="orientation">vertical</property>
                     <property name="css-classes">card</property>
                     <property name="overflow">hidden</property>
+                    <property name="vexpand">true</property>
                     <child>
                       <object class="GtkAspectFrame" id="frame_howdy">
                         <property name="ratio">1.0</property>
