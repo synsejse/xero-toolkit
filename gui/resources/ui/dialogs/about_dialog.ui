@@ -58,6 +58,13 @@
                 <property name="margin-top">10</property>
               </object>
             </child>
+            <child>
+              <object class="GtkLabel" id="version_label">
+                <property name="label">Version</property>
+                <property name="halign">center</property>
+                <property name="css-classes">dim-label</property>
+              </object>
+            </child>
             <!-- Credits Section -->
             <child>
               <object class="GtkBox" id="credits_box">

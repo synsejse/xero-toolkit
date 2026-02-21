@@ -33,6 +33,12 @@ pub fn show_about_dialog(parent: &Window) {
     let synse_label = extract_widget::<Label>(&builder, "synse_donate_label");
     setup_link_handler(&synse_label);
 
+    let version_label = extract_widget::<Label>(&builder, "version_label");
+    version_label.set_label(&format!(
+        "Version {}",
+        crate::config::constants::app_info::VERSION
+    ));
+
     // Set dialog as transient for parent
     dialog.set_transient_for(Some(parent));
 
