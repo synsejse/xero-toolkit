@@ -4,6 +4,7 @@
 //! - Tailscale VPN
 //! - ASUS ROG laptop tools
 //! - OpenRazer drivers
+//! - Cooler Control daemon tools
 
 use crate::core;
 use crate::ui::dialogs::selection::{
@@ -21,6 +22,7 @@ pub fn setup_handlers(page_builder: &Builder, _main_builder: &Builder, window: &
     setup_tailscale(page_builder, window);
     setup_asus_rog(page_builder, window);
     setup_openrazer(page_builder, window);
+    setup_cooler_control(page_builder, window);
     setup_zenergy(page_builder, window);
     setup_nvidia_legacy(page_builder, window);
     setup_rocm(page_builder, window);
@@ -123,6 +125,41 @@ fn setup_openrazer(builder: &Builder, window: &ApplicationWindow) {
                 "Install OpenRazer Drivers (Reboot Required)",
             );
         });
+    });
+}
+
+fn setup_cooler_control(builder: &Builder, window: &ApplicationWindow) {
+    let button = extract_widget::<Button>(builder, "btn_cooler_control");
+    let window = window.clone();
+
+    button.connect_clicked(move |_| {
+        info!("Cooler Control button clicked");
+
+        let commands = CommandSequence::new()
+            .then(
+                Command::builder()
+                    .aur()
+                    .args(&[
+                        "-S",
+                        "--noconfirm",
+                        "--needed",
+                        "coolercontrold",
+                        "liquidctl",
+                    ])
+                    .description("Installing Cooler Control daemon and liquidctl...")
+                    .build(),
+            )
+            .then(
+                Command::builder()
+                    .privileged()
+                    .program("systemctl")
+                    .args(&["enable", "--now", "coolercontrold.service"])
+                    .description("Enabling Cooler Control daemon service...")
+                    .build(),
+            )
+            .build();
+
+        task_runner::run(window.upcast_ref(), commands, "Install Cooler Control");
     });
 }
 
