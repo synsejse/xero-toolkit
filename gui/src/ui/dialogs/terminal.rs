@@ -45,7 +45,13 @@ fn update_terminal_style(terminal: &Terminal) {
 }
 
 /// Shows an interactive terminal window for the given command.
-pub fn show_terminal_dialog(parent: &Window, title: &str, command: &str, args: &[&str], close_on_exit: bool) {
+pub fn show_terminal_dialog(
+    parent: &Window,
+    title: &str,
+    command: &str,
+    args: &[&str],
+    close_on_exit: bool,
+) {
     // Load the UI
     let builder = Builder::from_resource(crate::config::resources::dialogs::TERMINAL);
 
