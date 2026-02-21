@@ -193,13 +193,14 @@ fn setup_grub_theme(builder: &Builder, window: &ApplicationWindow) {
     button.connect_clicked(move |_| {
         info!("GRUB Theme button clicked");
 
-        let install_command = "python3 <(curl -fsSL 'https://xerolinux.xyz/script/grubs/xero-grubs.py')";
+        let install_command = "cd /tmp && curl -fsSL 'https://xerolinux.xyz/script/grubs/xero-grubs.py' -o xero-grubs.py && python3 /tmp/xero-grubs.py &";
 
         terminal::show_terminal_dialog(
             window.upcast_ref(),
             "XeroLinux GRUB Theme Installation",
             "bash",
             &["-c", install_command],
+            true,
         );
     });
 }
@@ -216,6 +217,7 @@ fn setup_plymouth_manager(builder: &Builder, window: &ApplicationWindow) {
             "Plymouth Manager",
             "/usr/local/bin/xpm",
             &[],
+            false,
         );
     });
 }

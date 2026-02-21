@@ -45,7 +45,7 @@ fn update_terminal_style(terminal: &Terminal) {
 }
 
 /// Shows an interactive terminal window for the given command.
-pub fn show_terminal_dialog(parent: &Window, title: &str, command: &str, args: &[&str]) {
+pub fn show_terminal_dialog(parent: &Window, title: &str, command: &str, args: &[&str], close_on_exit: bool) {
     // Load the UI
     let builder = Builder::from_resource(crate::config::resources::dialogs::TERMINAL);
 
@@ -119,6 +119,7 @@ pub fn show_terminal_dialog(parent: &Window, title: &str, command: &str, args: &
     );
 
     // Enable close button and show exit status when child exits
+    let window_for_exit = window.clone();
     let terminal_exit = terminal.clone();
     terminal.connect_child_exited(move |_, status| {
         // Print exit message to terminal with improved formatting
@@ -133,6 +134,10 @@ pub fn show_terminal_dialog(parent: &Window, title: &str, command: &str, args: &
         // Enable close button and ensure it's blue
         close_button_clone.add_css_class("suggested-action");
         close_button_clone.set_sensitive(true);
+
+        if close_on_exit && exit_code == 0 {
+            window_for_exit.close();
+        }
     });
 
     window.present();

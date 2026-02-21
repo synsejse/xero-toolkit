@@ -46,6 +46,7 @@ fn setup_clr_pacman(page_builder: &Builder, window: &ApplicationWindow) {
             "Clear Pacman Cache",
             "pkexec",
             &["pacman", "-Scc"],
+            false,
         );
     });
 }
@@ -130,6 +131,7 @@ fn setup_fix_gpgme(page_builder: &Builder, window: &ApplicationWindow) {
             "Fix GPGME Database",
             "pkexec",
             &["sh", "-c", "rm -rf /var/lib/pacman/sync && pacman -Syy"],
+            false,
         );
     });
 }
@@ -245,6 +247,7 @@ fn setup_parallel_downloads(page_builder: &Builder, window: &ApplicationWindow) 
             "Change Parallel Downloads",
             "pkexec",
             &["pmpd"],
+            false,
         );
     });
 }

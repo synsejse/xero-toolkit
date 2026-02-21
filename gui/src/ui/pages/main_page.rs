@@ -227,6 +227,7 @@ fn setup_update_system(builder: &Builder, window: &ApplicationWindow) {
             "System Update",
             "/usr/local/bin/upd",
             &[],
+            false,
         );
     });
 }
@@ -457,9 +458,10 @@ fn setup_install_nix(builder: &Builder, window: &ApplicationWindow) {
 
                     terminal::show_terminal_dialog(
                         window_for_selection.upcast_ref(),
-            "Install Nix Package Manager",
+                        "Install Nix Package Manager",
                         "sh",
                         &["-c", install_command],
+                        false,
                     );
                 });
             },
